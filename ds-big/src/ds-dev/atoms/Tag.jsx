@@ -8,7 +8,7 @@ export default function Tag({
   onRemove,
   onClick,
 }) {
-  const isControl  = variant === 'control'
+  const isControl    = variant === 'control'
   const ariaDisabled = disabled ? 'true' : undefined
 
   const bg = selected
@@ -35,9 +35,10 @@ export default function Tag({
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: isControl ? 'var(--space-4)' : undefined,
+        gap: isControl ? 'var(--space-10)' : undefined,
         height: 24,
-        padding: '0 var(--space-8)',
+        boxSizing: 'border-box',
+        padding: 'var(--space-8)',
         borderRadius: 'var(--radius-4)',
         backgroundColor: bg,
         color: 'var(--text-primary)',

@@ -15,6 +15,7 @@ export default function ErrorBanner({
         borderRadius: 'var(--radius-4)',
         backgroundColor: 'var(--surface-card-on-card-red)',
         color: 'var(--status-error)',
+        letterSpacing: '1.6px',
       }}
     >
       <span>error!</span>

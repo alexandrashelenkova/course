@@ -88,11 +88,8 @@ export default function AtomsPage() {
   // stateful demos
   const [sgValue,       setSgValue]       = useState('Team')
   const [flagActive,    setFlagActive]    = useState(false)
-  const [btnSelected,   setBtnSelected]   = useState(false)
-  const [tagSelected,   setTagSelected]   = useState(false)
   const [inputVal,      setInputVal]      = useState('')
   const [taVal,         setTaVal]         = useState('')
-  const [switchActive,  setSwitchActive]  = useState(true)
 
   return (
     <div
@@ -125,21 +122,6 @@ export default function AtomsPage() {
             <Btn type="node" label="More info" sublabel="more info" />
           </StateLabel>
         </VariantRow>
-        <VariantRow label="selected (secondary / On color)">
-          <StateLabel>
-            <SLabel>selected</SLabel>
-            <Btn type="secondary" label="Selected" selected={btnSelected} onClick={() => setBtnSelected(v => !v)} />
-          </StateLabel>
-          <StateLabel>
-            <SLabel>selected (On color)</SLabel>
-            <Btn type="On color" label="Selected" selected={btnSelected} onClick={() => setBtnSelected(v => !v)} />
-          </StateLabel>
-        </VariantRow>
-        <VariantRow label="states">
-          <StateLabel><SLabel>default (interactive)</SLabel> <Btn type="secondary" label="Default"  /></StateLabel>
-          <StateLabel><SLabel>disabled</SLabel>              <Btn type="secondary" label="Disabled" disabled /></StateLabel>
-          <StateLabel><SLabel>disabled big</SLabel>          <Btn type="big" label="Disabled" disabled /></StateLabel>
-        </VariantRow>
       </AtomSection>
 
       {/* ── switch ─────────────────────────────────────────────────────── */}
@@ -153,10 +135,6 @@ export default function AtomsPage() {
           <StateLabel><SLabel>off</SLabel> <Switch label="Team" size="small" active={false} /></StateLabel>
         </VariantRow>
         <VariantRow label="states">
-          <StateLabel>
-            <SLabel>interactive toggle</SLabel>
-            <Switch label={switchActive ? 'On' : 'Off'} size="big" active={switchActive} onClick={() => setSwitchActive(v => !v)} />
-          </StateLabel>
           <StateLabel><SLabel>disabled</SLabel> <Switch label="Team" size="big" active={false} disabled /></StateLabel>
         </VariantRow>
       </AtomSection>
@@ -189,18 +167,9 @@ export default function AtomsPage() {
       {/* ── tag ────────────────────────────────────────────────────────── */}
       <AtomSection id="tag" title="tag">
         <VariantRow label="variants">
-          <StateLabel><SLabel>control</SLabel> <Tag variant="control" label="React" /></StateLabel>
-          <StateLabel><SLabel>static</SLabel>  <Tag variant="static"  label="React" /></StateLabel>
-        </VariantRow>
-        <VariantRow label="selected (control)">
-          <StateLabel>
-            <SLabel>selected toggle</SLabel>
-            <Tag variant="control" label="React" selected={tagSelected} onClick={() => setTagSelected(v => !v)} />
-          </StateLabel>
-        </VariantRow>
-        <VariantRow label="states">
-          <StateLabel><SLabel>default (interactive)</SLabel> <Tag variant="control" label="React" /></StateLabel>
-          <StateLabel><SLabel>disabled</SLabel>              <Tag variant="control" label="React" disabled /></StateLabel>
+          <StateLabel><SLabel>control</SLabel>  <Tag variant="control" label="React" /></StateLabel>
+          <StateLabel><SLabel>static</SLabel>   <Tag variant="static"  label="React" /></StateLabel>
+          <StateLabel><SLabel>disabled</SLabel> <Tag variant="control" label="React" disabled /></StateLabel>
         </VariantRow>
       </AtomSection>
 
@@ -234,12 +203,6 @@ export default function AtomsPage() {
           <Status variant="red"     />
           <Status variant="stopped" />
         </VariantRow>
-        <VariantRow label="custom labels">
-          <Status variant="purple"  label="In Progress"  />
-          <Status variant="green"   label="Completed"    />
-          <Status variant="red"     label="Blocked"      />
-          <Status variant="stopped" label="On Hold"      />
-        </VariantRow>
       </AtomSection>
 
       {/* ── error ──────────────────────────────────────────────────────── */}
@@ -259,20 +222,12 @@ export default function AtomsPage() {
           <StateLabel><SLabel>dog</SLabel>   <Avatar person="dog"   /></StateLabel>
           <StateLabel><SLabel>petya</SLabel> <Avatar person="petya" /></StateLabel>
         </VariantRow>
-        <VariantRow label="sizes">
-          <StateLabel><SLabel>24</SLabel> <Avatar person="katya" size={24} /></StateLabel>
-          <StateLabel><SLabel>30</SLabel> <Avatar person="katya" size={30} /></StateLabel>
-          <StateLabel><SLabel>40</SLabel> <Avatar person="katya" size={40} /></StateLabel>
-        </VariantRow>
       </AtomSection>
 
       {/* ── avatars ────────────────────────────────────────────────────── */}
       <AtomSection id="avatars" title="avatars">
         <VariantRow label="default (3 overlapping)">
           <Avatars />
-        </VariantRow>
-        <VariantRow label="custom order">
-          <Avatars people={['dog', 'katya', 'petya']} />
         </VariantRow>
       </AtomSection>
 
@@ -288,7 +243,7 @@ export default function AtomsPage() {
             <Bar size="default" value={20} />
           </div>
         </VariantRow>
-        <VariantRow label="size=big (12px dots)">
+        <VariantRow label="size=big (2×5px dots, 2 rows)">
           <div style={{ width: 300 }}>
             <p className="text-caps" style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-8)' }}>75%</p>
             <Bar size="big" value={75} />
@@ -355,9 +310,6 @@ export default function AtomsPage() {
       <AtomSection id="graph" title="graph">
         <VariantRow label="default (Figma layout)">
           <Graph bars={[100, 58]} />
-        </VariantRow>
-        <VariantRow label="custom data">
-          <Graph bars={[80, 40, 60, 90, 30]} maxHeight={82} />
         </VariantRow>
       </AtomSection>
 

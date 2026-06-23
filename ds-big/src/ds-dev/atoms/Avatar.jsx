@@ -7,12 +7,14 @@ const SRCS = {
   petya: 'https://www.figma.com/api/mcp/asset/99b3efc1-6b24-4c60-bd84-183d9a939501',
 }
 
-export default function Avatar({ person = 'katya', size = 30 }) {
+const SIZE = 30
+
+export default function Avatar({ person = 'katya' }) {
   return (
     <div
       style={{
-        width: size,
-        height: size,
+        width: SIZE,
+        height: SIZE,
         borderRadius: '50%',
         overflow: 'hidden',
         flexShrink: 0,

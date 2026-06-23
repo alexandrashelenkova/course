@@ -19,11 +19,13 @@ export default function List({
       }}
     >
       <p
-        className="text-h4 min-w-0"
         style={{
           flex: '1 0 0',
-          color: 'var(--text-primary)',
+          fontFamily: 'var(--font-family-grotesk)',
+          fontSize: 'var(--font-size-20)',
+          fontWeight: 'var(--font-weight-400)',
           letterSpacing: '-0.4px',
+          color: 'var(--text-primary)',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',

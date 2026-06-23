@@ -11,7 +11,7 @@ export default function TextArea({
   const id = useId()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)', width: 240 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)', width: 180 }}>
       {headline && (
         <label
           htmlFor={id}
@@ -37,11 +37,10 @@ export default function TextArea({
           color: value ? 'var(--text-primary)' : 'var(--color-gray-200)',
           border: 'none',
           outline: 'none',
-          resize: 'vertical',
+          resize: 'none',
           width: '100%',
           boxSizing: 'border-box',
           cursor: disabled ? 'not-allowed' : 'text',
-          fontFamily: 'inherit',
         }}
       />
     </div>

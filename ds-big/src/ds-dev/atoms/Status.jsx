@@ -5,9 +5,8 @@ const CONFIG = {
   stopped: { token: 'var(--color-gray-200)', label: 'Failing'       },
 }
 
-export default function Status({ variant = 'purple', label }) {
+export default function Status({ variant = 'purple' }) {
   const cfg = CONFIG[variant] ?? CONFIG.purple
-  const text = label ?? cfg.label
 
   return (
     <div
@@ -29,7 +28,7 @@ export default function Status({ variant = 'purple', label }) {
         className="text-text-pixel whitespace-nowrap tracking-[2px] uppercase"
         style={{ color: cfg.token }}
       >
-        {text}
+        {cfg.label}
       </span>
     </div>
   )

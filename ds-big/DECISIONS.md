@@ -117,3 +117,234 @@ Single class handles all states — hover/pressed via `::after` overlay, focus v
 - **JS:** 211.26 kB (gzip 64.07 kB)
 - **Status:** ✅ first attempt, zero errors
 - **Dev command:** `npm run dev` → [http://localhost:5173/ds-dev/atoms](http://localhost:5173/ds-dev/atoms)
+
+---
+
+## R2-fix — Atoms corrective pass — 2026-06-23
+
+Figma ds-atoms was re-read as source of truth. All 12 items resolved. Build passes.
+
+### Checklist
+
+| # | Atom        | Fix applied                                                                      | Figma node  | Status |
+|---|-------------|----------------------------------------------------------------------------------|-------------|--------|
+| 1 | BUTTON      | Removed "selected" VariantRow + "states" VariantRow from AtomsPage. Removed `btnSelected` state var. Only "variants" row remains (5 Figma types). | 357:35427 | ✅ done |
+| 2 | SWITCH      | Removed "interactive toggle" StateLabel from AtomsPage switch "states" VariantRow. Removed `switchActive` state var. | 357:35345 | ✅ done |
+| 3 | DROPDOWN    | Dropdown uses `<Icons name="arrow-down" />` which now renders actual Figma SVG path (boxed download arrow). No change to Dropdown.jsx itself. | 357:35391 | ✅ done |
+| 4 | TAG         | Fixed padding: `'0 var(--space-8)'` → `'var(--space-8)'` (all sides per Figma `p-[8px]`). Fixed gap: `var(--space-4)` → `10` px (Figma `gap-[10px]`, not a token). | 357:35359 | ✅ done |
+| 5 | TEXTAREA    | `resize: 'vertical'` → `'none'`. Removed `fontFamily: 'inherit'` (now inherits pixel font class). Wrapper width `240` → `180`. | 357:35381 | ✅ done |
+| 6 | STATUS      | Removed `label` prop from Status.jsx; labels now hardcoded from CONFIG only. Removed "custom labels" VariantRow from AtomsPage. | 357:35321 | ✅ done |
+| 7 | ERROR       | Added `letterSpacing: '1.6px'` to ErrorBanner div style (Figma `tracking-[1.6px]`; missing from `text-caps` class). | 357:35365 | ✅ done |
+| 8 | AVATAR      | Removed `size` prop; hardcoded `const SIZE = 30`. Removed "sizes" VariantRow from AtomsPage. | 357:35314 | ✅ done |
+| 9 | BAR         | "big" variant now renders 2 rows of 5px dots (not 12px circles). Uses two `radial-gradient` layers at y=2.5px and y=9.5px, `background-size: 7px 12px`. Updated AtomsPage label. | 357:34112 | ✅ done |
+|10 | ICONS       | All 5 icons replaced with actual Figma paths (fill="currentColor"). play=solid wedge; user=filled silhouette; more=3 circles; arrow-down=boxed download arrow; close=circle-minus. SVG source files saved to `src/ds-dev/assets/icons/`. | 357:35334 | ✅ done |
+|11 | LIST        | Name column: replaced `className="text-h4"` (grotesk 15px 700) with inline style `fontFamily: grotesk, fontSize: --font-size-20, fontWeight: --font-weight-400, letterSpacing: -0.4px` (matches Figma grotesk 20px regular). | 357:35374 | ✅ done |
+|12 | GRAPH       | Removed "custom data" VariantRow (5-bar) from AtomsPage. Only "default (Figma layout)" row remains. | 357:35416 | ✅ done |
+
+### SVGs exported from Figma
+
+| File | Node | Size |
+|------|------|------|
+| `src/ds-dev/assets/icons/play.svg`       | 357:35335 | 804 B  |
+| `src/ds-dev/assets/icons/user.svg`       | 357:35337 | 883 B  |
+| `src/ds-dev/assets/icons/more.svg`       | 357:35339 | 1090 B |
+| `src/ds-dev/assets/icons/arrow-down.svg` | 357:35341 | 1575 B |
+| `src/ds-dev/assets/icons/close.svg`      | 357:35343 | 1087 B |
+
+Clean versions (fill="currentColor", no Figma context groups) overwrite the originals and are used as path sources in `Icons.jsx`.
+
+### Build result — R2-fix
+
+- **Modules:** 57
+- **CSS:** 14.31 kB (gzip 3.61 kB)
+- **JS:** 212.43 kB (gzip 65.04 kB)
+- **Status:** ✅ first attempt, zero errors
+- **Dev command:** `npm run dev` → [http://localhost:5173/ds-dev/atoms](http://localhost:5173/ds-dev/atoms)
+
+---
+
+## tag-fix — Tag corrective pass — 2026-06-23
+
+### Figma metrics read (node 357:35359)
+
+| Property       | Figma value                           | CSS token / value         |
+|----------------|---------------------------------------|---------------------------|
+| height         | `h-[24px]`                            | `height: 24` (border-box) |
+| padding        | `p-[var(--space/8,8px)]` (all sides)  | `var(--space-8)`          |
+| border-radius  | `rounded-[var(--radius/4,4px)]`       | `var(--radius-4)`         |
+| gap (control)  | `gap-[10px]` (no space token in Figma)| `var(--space-10)` (new)   |
+| text           | pixel font 10px uppercase tracking-2px| `text-text-pixel tracking-[2px] uppercase` |
+| fill (control) | `var(--control/secondary)`            | `var(--control-secondary)` |
+| fill (static)  | `var(--surface/card/on-card/red)`     | `var(--surface-card-on-card-red)` |
+| text color     | `var(--text/primary)`                 | `var(--text-primary)` |
+
+Disabled state: baked into `.ds-interactive[aria-disabled='true']` → opacity 0.45, cursor not-allowed. No separate Figma variant.
+
+### Changes made
+
+**Step 2 — tokens.css:** Added `--space-10: 10px` after `--space-8` in the primitives layer. Sequence is now 4 → 8 → **10** → 14. Decision: Figma uses `gap-[10px]` (no Figma token for this value); `--space-10` is the correct primitive to add rather than using the nearest (`--space-8` or `--space-14`) which would both be wrong.
+
+**Step 3 — Tag.jsx:**
+- Gap: hardcoded `10` → `var(--space-10)`.
+- Added `boxSizing: 'border-box'` to inline style to guarantee `height: 24` is the total outer height (matching Tailwind Figma box model). This ensures the 8px all-sides padding is internal to the 24px height rather than additive.
+- Padding and radius were already correct (`var(--space-8)`, `var(--radius-4)`) from the prior R2-fix.
+
+**Step 4 — AtomsPage.jsx:**
+- Removed `VariantRow label="selected (control)"` (contained "selected toggle" interactive demo).
+- Removed `VariantRow label="states"` (contained "default (interactive)" + "disabled").
+- Added disabled tag directly into the "variants" row as a third item.
+- Removed `const [tagSelected, setTagSelected] = useState(false)` (was only used by removed row).
+- Tag section now shows: control · static · disabled — all in one "variants" row. No separate interactive-state showcases.
+
+### Build result — tag-fix
+
+- **CSS:** 14.33 kB (gzip 3.62 kB) — +0.02 kB for `--space-10`
+- **JS:** 212.12 kB (gzip 65.00 kB)
+- **Status:** ✅ first attempt, zero errors
+
+---
+
+## R3 — Molecules — 2026-06-23
+
+### Part A — Figma reads (sequential, node 357:35439)
+
+10 molecules found in ds-molecules section. Read one node at a time in order:
+
+| # | Molecule | Node | Variants | Atoms used |
+|---|----------|------|----------|------------|
+| 1 | profile | 357:35440 | long (357:35441), short (357:35449), short-outlined (357:35454) | Avatar, Status, Bar |
+| 2 | node | 357:35459 | Default (357:35460) | Icons (play, more) |
+| 3 | campaign_preview | 357:35471 | Default (357:35472) | Status, Btn |
+| 4 | project_preview | 357:35491 | Default (357:35492) | — (inline yellow tags) |
+| 5 | experience_preview | 357:35499 | Default (357:35500) | — (pure text) |
+| 6 | team | 357:35507 | Default (357:35508) | Bar, Avatars |
+| 7 | card metric | 357:35523 | Default (357:35524) | Graph |
+| 8 | Cards metrica | 357:35529 | Default (357:35530) | — (pure text) |
+| 9 | attemt | 357:35535 | Default (357:35536), Variant2 (357:35552) | — (inline status in Default) |
+| 10 | notify | 357:35567 | type=Default (357:35568) | Btn (optional) |
+
+### Part B — Component decisions
+
+**Profile** — 3 variants in one component: `long` (border-bottom row with Avatar/name-role/Status/Bar),
+`short` (h=59 card, `--surface-card-on-card-red` bg), `short-outlined` (h=59 card, `--border-default` bg).
+
+**NodeCard** — Named `NodeCard.jsx` (not `Node`) to avoid namespace confusion. Two connector dots
+(10px circles): left = `--color-gray-200`, right = `--color-black`.
+
+**CampaignPreview** — Uses antiqa 84px for stat numbers (`--font-size-84`), grotesk 8px for labels
+(tracking 1.6px). Five stats rendered via array prop with defaults matching Figma.
+
+**ProjectPreview** — Yellow tags (`--surface-card-on-card-yellow`) rendered inline at h=32 with gap-2.
+**Not** using the Tag atom because Figma's project_preview tags are h=32 (not h=24 like the Tag atom).
+
+**Team** — Bar uses `colorFilled="var(--status-success)"` (teal) per Figma. Figma shows
+three-segment bar (teal/light-teal/white); molecule uses two-segment Bar atom with teal fill — close
+enough, full three-segment multi-fill not modelled.
+
+**Attemt** — `variant="Default"` shows "failed" inline (dot + pixel text in `--status-error`) rather
+than Status atom because the Status atom hardcodes label "Failing" (r2-fix decision); "failed" is the
+exact Figma wording. `variant="Variant2"` shows "$?" placeholders and no status indicator.
+
+**Notify** — Pixel 30px text (`--font-size-30`) in `--status-success` (teal) on green card. Optional
+`showBtn` prop renders a `Btn type="On color"` below the text.
+
+### Atom prop additions (minimal, required by molecules)
+
+| Atom | New prop | Used by |
+|------|----------|---------|
+| Bar.jsx | `colorFilled` — overrides `--bar-on-base-filled` | Team (teal bar) |
+| Graph.jsx | `color` — overrides `--text-secondary` bar fill | CardMetric (gray-50 + multiply on green) |
+
+### Part C — Wiring
+
+- Created `src/ds-dev/molecules/` directory with 10 `.jsx` files.
+- Created `src/pages/MoleculesPage.jsx` — same `MolSection`/`VariantRow` pattern as AtomsPage.
+- `src/App.jsx`: swapped `<ComingSoonPage section="Molecules" />` → `<MoleculesPage />`.
+- `src/components/Sidebar.jsx` NAV_CONFIG: molecules entry now has 10 subsections (scrollspy-ready).
+
+### Build result — R3
+
+- **CSS:** 14.33 kB (gzip 3.62 kB) — no token changes
+- **JS:** 227.93 kB (gzip 67.20 kB) — +15.8 kB for 10 molecules + MoleculesPage
+- `✓ built in 631ms` — zero errors, zero warnings
+
+### Dev command
+
+```
+npm run dev
+```
+Then visit: http://localhost:5173/ds-dev/molecules
+
+---
+
+## molecules-fix — 2026-06-23
+
+### 1 — BAR ATOM: whole-dot model (no fractional last dot)
+
+**Figma node:** 357:34112 (Bar atom) — rate-limited on re-read; used data from prior R2-fix read + Team molecule read (357:35516).
+
+**Problem:** old model used `width: ${pct}%` for the filled section, which clipped the last dot at a fractional pixel. Empty section started at that same arbitrary pixel, so boundaries between segments were mid-dot.
+
+**New model:** `ResizeObserver` measures container → `totalDots = Math.floor(width / 7)`. `filledDots = Math.round(pct/100 * totalDots)`. Each section is an exact multiple of 7px (5px dot + 2px gap). No partial dot is possible. `overflow: hidden` on the container clips the small remainder pixel.
+
+**New props:**
+- `colorFilled` — override filled dot token (default: `var(--bar-on-base-filled)`)
+- `colorEmpty` — override empty dot token (default: `var(--bar-on-base-empty)`)
+
+**Default tokens (unchanged):** filled = `var(--bar-on-base-filled)` = `var(--color-sage)` · empty = `var(--bar-on-base-empty)` = `var(--color-white)`
+
+---
+
+### 2 — TEAM: pale teal empty dots restored
+
+**Figma tokens (from 357:35516 read):**
+- Filled: `var(--color/text-&-icon/green)` = #00867b = `var(--status-success)` ✓
+- Empty/pale: `var(--color/background/on-cads/green)` = #d4eee7 = `var(--surface-card-on-card-green)` = `var(--color-teal-200)` — both are existing primitives in tokens.css, no alpha reduction needed
+
+**Change:** `<Bar colorFilled="var(--status-success)" colorEmpty="var(--surface-card-on-card-green)" />`
+
+Result: bright teal dots up to 89%, pale teal for the remaining 11%. All whole dots.
+
+---
+
+### 3 — PROFILE / long: alignItems + bar colors
+
+**Figma:** `items-start` on the row container — was `alignItems: 'center'`, corrected to `alignItems: 'flex-start'`.
+
+**Bar colors:** same teal pair as Team (Figma for profile long also shows teal bar per session screenshot "green dots → lighter-green → gray"). Applied `colorFilled="var(--status-success)" colorEmpty="var(--surface-card-on-card-green)"`. Bar wrapper uses `alignSelf: 'center'` so it stays vertically centered in the taller row.
+
+**Paddings:** `paddingTop/paddingBottom: var(--space-14)`, no horizontal padding — matches Figma `py-[var(--space/14)]`. No change needed.
+
+---
+
+### 4 — PROFILE / short + short-outlined: height auto
+
+**Problem:** `height: 59` was a fixed value from Figma's expanded frame. Task requires HUG (fit-content).
+
+**Fix:** Changed outer div from `display: 'flex'` (block) to `display: 'inline-flex'` and removed `height: 59`. Height is now governed by `padding: var(--space-14)` (28px total vertical) + tallest child (text column ~38px) ≈ 66px. Cards shrink/grow with content.
+
+---
+
+### 5 — NODECARD: left dot color
+
+**Problem:** `var(--color-gray-200)` is a raw primitive. Task required re-read but Figma MCP was rate-limited; Figma rendered the dot as an Ellipse image asset so exact color was not derivable from the prior read.
+
+**Decision:** Changed to `var(--text-secondary)` = `var(--color-gray-400)` = #979797. Rationale: `--text-secondary` is the correct semantic token for an "inactive/secondary" element; #979797 (darker gray) is more visible than #cbcbcb on the pink card background (`--surface-card-red` = #f5cfca). **FLAGGED** — could not re-verify from Figma due to rate limit.
+
+---
+
+### 6 — CARDMETRIC + CARDSMETRICA: side paddings
+
+**Problem:** Both used `padding: var(--space-30)` (30px all sides). CardMetric card is 190px wide → content width = 190 − 60 = 130px, but Graph atom has `width: 143` (fixed) which overflows by 13px.
+
+**Fix:** Changed to `padding: 'var(--space-30) var(--space-14)'` (30px top/bottom, 14px left/right). Content width = 190 − 28 = 162px → Graph (143px) fits with 19px to spare. CardsMetrica (202px) content = 202 − 28 = 174px — all text, no overflow concern.
+
+**Token bound:** `var(--space-14)` for horizontal, `var(--space-30)` for vertical — both existing primitives.
+
+---
+
+### Build result — molecules-fix
+
+- **CSS:** 14.63 kB (gzip 3.67 kB)
+- **JS:** 228.48 kB (gzip 67.42 kB)
+- `✓ built in 512ms` — zero errors
