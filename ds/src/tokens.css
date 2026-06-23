@@ -1,0 +1,197 @@
+/**
+ * Design tokens — single source of truth.
+ *
+ * Extracted from Figma "WBL AI Design System Shorts"
+ * (file YJlrRZ0qVDw0pwdLsbouF2) via Figma Dev Mode.
+ *   - Tokens frame "01 Tokens"  -> node 44-21
+ *   - Text styles "02 Text Styles" -> node 44-44
+ *   - Effect styles read from component bindings (Card, Input) -> node 44-52
+ *
+ * Figma token names are preserved as the CSS custom property names
+ * (e.g. Figma `color/primary` -> `--color-primary`). Change a value here
+ * and every consumer — including the /ds-dev/ reference page, which reads
+ * these properties live — updates automatically. No hex anywhere else.
+ */
+
+:root {
+  /* ---- Color (Figma collection: color/*) ---- */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-secondary: #6b7280;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text-strong: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+
+  /* ---- Spacing (Figma collection: spacing/*) ---- */
+  --spacing-space-2: 8px;
+  --spacing-space-3: 16px;
+  --spacing-space-4: 24px;
+  --spacing-space-5: 40px;
+  --spacing-space-6: 64px;
+
+  /* ---- Radius (Figma collection: radius/*) ---- */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+
+  /* ---- Effects (Figma effect styles) ---- */
+  /* Card/Default drop shadow */
+  --effect-card-shadow: 0px 4px 8px rgba(15, 23, 41, 0.08);
+  /* Input focus ring (primary @ 20%). Figma's CSS drop-shadow export drops the
+     spread, so it arrives as `0 0 0`; rendered here with a 3px spread to match
+     the visible ring in the design. */
+  --effect-focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.2);
+
+  /* ---- Typography (Figma text styles) ---- */
+  --font-family-base: 'Inter', system-ui, sans-serif;
+}
+
+/**
+ * Text styles — one class per Figma text style.
+ * Naming follows the Figma style names (Display, Heading, …).
+ * Format below is size / line-height · weight.
+ */
+.ds-text-display {
+  font-family: var(--font-family-base);
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+.ds-text-heading {
+  font-family: var(--font-family-base);
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+.ds-text-subheading {
+  font-family: var(--font-family-base);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: normal;
+}
+.ds-text-body {
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+.ds-text-label {
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: normal;
+}
+.ds-text-caption {
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+/* ============================================================================
+   EXTENDED VALUES — used by the components in Figma node 44-52 but NOT bound as
+   Figma variables in the file (so they were absent from the token collection).
+   Named here so no raw hex/px leaks into component code. These are PENDING your
+   confirmation of names/values — see the build report.
+   ============================================================================ */
+:root {
+  /* Colors (raw fills in Figma, not bound to a variable) */
+  --color-primary-tint: #f0f5ff;     /* Button · Ghost / Hover background */
+  --color-primary-surface: #eff6ff;  /* Sections: hero badge bg, card icon bg, CTA band bg — slightly different from ghost tint */
+  --color-primary-border-light: #bfdbfe; /* Hero badge border */
+  --color-text-subtle: #94a3b8;      /* Input placeholder + Footer link text (same raw value, two semantic uses) */
+  --color-text-default: #475569;     /* Nav Link (default) + Badge neutral text */
+  --color-success-surface: #dcfce7;  /* Badge · Success background */
+  --color-success-text: #15803d;     /* Badge · Success text */
+  --color-danger-surface: #fee2e2;   /* Badge · Danger background */
+  --color-neutral-surface: #f1f5f9;  /* Badge · Neutral background */
+
+  /* Spacing — natural extension of the 8/16/24/40/64 scale */
+  --spacing-space-1: 4px;            /* Badge vertical padding; Nav Link active gap */
+
+  /* Component-specific sizing (no matching value in the spacing/radius scales) */
+  --input-gap: 6px;                  /* Input: label / field / helper gap */
+  --input-padding-x: 14px;           /* Input field horizontal padding */
+  --input-padding-y: 10px;           /* Input field vertical padding */
+  --badge-padding-x: 10px;           /* Badge horizontal padding */
+  --border-width: 1.5px;             /* Input + Secondary button border */
+  --navlink-indicator-height: 2px;   /* Nav Link active underline */
+  --navlink-indicator-radius: 1px;   /* Nav Link active underline */
+  --opacity-disabled: 0.4;           /* Disabled buttons */
+
+  /* ---- Section layout values (node 44-107) ---- */
+  /* Spacing values that appear in section layouts but are not Figma variables */
+  --spacing-xs: 12px;                /* Nav link / badge pill horizontal pad; section header inner gap */
+  --spacing-section-item-gap: 20px;  /* Navbar logo py; Footer inner gap between links + copyright */
+  --spacing-cta-gap: 32px;           /* Hero column gap; Footer links row gap; CTA Band column gap */
+  --spacing-feature-gap: 48px;       /* Feature Row outer gap (header → cards) */
+  --spacing-section-y: 80px;         /* Feature Row + CTA Band block padding-block */
+
+  /* Button "large" padding — sections use 20/10 instead of the component default 16/8 */
+  --button-padding-x-lg: 20px;
+  --button-padding-y-lg: 10px;
+
+  /* Radius for fully-round pill shapes (hero badge) */
+  --radius-full: 9999px;
+
+  /* Logo mark size */
+  --logo-size: 28px;
+
+  /* CTA Band email input fixed width */
+  --input-cta-width: 300px;
+
+  /* Effect: Feature Row card shadow — wider blur (16px) than the base card shadow (8px) */
+  --effect-feature-shadow: 0px 4px 16px rgba(15, 23, 41, 0.08);
+}
+
+/* Component text treatments — built from the type-scale sizes (14 / 12) with the
+   weights the components actually use. These specific size+weight pairings are
+   not separate named text styles in Figma. */
+.ds-text-button {
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  line-height: normal;
+  font-weight: 600;
+}
+.ds-text-body-sm {
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  line-height: normal;
+  font-weight: 400;
+}
+.ds-text-badge {
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 500;
+}
+
+/* Input placeholder color (can't be set via inline style) */
+.ds-input-field::placeholder {
+  color: var(--color-text-subtle);
+}
+
+/* Section-level text styles — not named text styles in Figma, but used in
+   section layouts as distinct sizes not covered by the existing scale. */
+.ds-text-hero {
+  font-family: var(--font-family-base);
+  font-size: 52px;
+  line-height: normal;
+  font-weight: 700;
+}
+.ds-text-section-heading {
+  font-family: var(--font-family-base);
+  font-size: 36px;
+  line-height: normal;
+  font-weight: 700;
+}

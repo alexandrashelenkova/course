@@ -1,0 +1,47 @@
+{
+  "file": "YJlrRZ0qVDw0pwdLsbouF2",
+  "fileName": "WBL AI Design System Shorts",
+  "snapshotAt": "2026-06-18",
+  "components": [
+    {
+      "name": "Button",
+      "figmaNode": "44-54",
+      "variants": ["primary", "secondary", "ghost"],
+      "states": ["default", "hover", "disabled"],
+      "props": ["variant", "state", "disabled", "children"],
+      "description": "A clickable action element with three visual variants — primary for the main call to action, secondary for alternative actions, and ghost for low-emphasis actions. Use it wherever users need to trigger an action: form submissions, navigation, or dialog confirmations."
+    },
+    {
+      "name": "Input",
+      "figmaNode": "44-73",
+      "variants": [],
+      "states": ["default", "focus", "error"],
+      "props": ["label", "placeholder", "helperText", "state", "error"],
+      "description": "A labeled text field for collecting user-entered text, with optional helper text and three interactive states — default, focused, and error. Use it for single-line input such as names, emails, or search queries; pair with the error state to surface validation feedback."
+    },
+    {
+      "name": "Badge",
+      "figmaNode": "44-94",
+      "variants": ["success", "danger", "neutral"],
+      "states": [],
+      "props": ["variant", "children"],
+      "description": "A compact inline label that conveys semantic status using color — success (green), danger (red), or neutral (gray). Use it to tag items in lists, cards, or tables to communicate their current state at a glance."
+    },
+    {
+      "name": "Card",
+      "figmaNode": "44-89",
+      "variants": ["default"],
+      "states": [],
+      "props": ["icon", "heading", "body", "actionLabel", "children"],
+      "description": "A contained surface for grouping related content with an optional icon, heading, body text, and action link. Use it to present feature highlights, info items, or any grouped content that benefits from visual separation in a grid or list layout."
+    },
+    {
+      "name": "NavLink",
+      "figmaNode": "44-101",
+      "variants": [],
+      "states": ["default", "active"],
+      "props": ["active", "state", "children", "href"],
+      "description": "A navigation anchor that renders a primary-colored underline indicator when active. Use it inside navbars to mark the current section and provide clear wayfinding across pages."
+    }
+  ]
+}

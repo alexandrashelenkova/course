@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alexandra Shelenkova — Web Designer & UI/UX Specialist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aldrich&family=Jersey+25&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #2D5BFF;
+      --text: #1A1A2E;
+      --muted: #5C6070;
+      --border: #E6E8EC;
+      --card-bg: #FFFFFF;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Aldrich', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(125.93deg, #F7E3FF 2.9%, #E3F5FF 96.2%);
+      min-height: 100vh;
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 140px 0 100px;
+    }
+
+    .hero__eyebrow {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .hero__name {
+      font-family: 'Jersey 25', sans-serif;
+      font-size: 64px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .hero__title {
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .hero__bio {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 620px;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(-70.84deg, #2D5BFF 0.72%, #7E2DFF 95.97%);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 400;
+      text-decoration: none;
+      padding: 16px 32px;
+      border-radius: 10px;
+    }
+
+    /* Projects */
+    .projects {
+      padding: 40px 0 120px;
+    }
+
+    .projects__heading {
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      margin-bottom: 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(26, 26, 46, 0.04);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card__name {
+      font-size: 20px;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+
+    .card__desc {
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      flex-grow: 1;
+    }
+
+    .card__link {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--accent);
+      text-decoration: none;
+      align-self: flex-start;
+    }
+
+    .card__link::after {
+      content: " →";
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding: 90px 0 70px;
+      }
+
+      .hero__name {
+        font-size: 44px;
+      }
+
+      .hero__title {
+        font-size: 20px;
+      }
+
+      .hero__bio {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <span class="hero__eyebrow">PORTFOLIO</span>
+      <h1 class="hero__name">Alexandra Shelenkova</h1>
+      <p class="hero__title">Web Designer &amp; UI/UX Specialist</p>
+      <p class="hero__bio">I create clear and elegant interfaces for websites and apps. I specialize in landing pages, design systems, and product design. For over 5 years I've helped brands look modern and work seamlessly.</p>
+      <a class="btn" href="mailto:hello@annasokolova.design">Get in touch</a>
+    </div>
+  </header>
+
+  <main class="projects">
+    <div class="container">
+      <h2 class="projects__heading">Selected Projects</h2>
+      <div class="grid">
+        <article class="card">
+          <h3 class="card__name">Lumio</h3>
+          <p class="card__desc">Landing page for a fintech startup</p>
+          <a class="card__link" href="https://example.com/lumio">View</a>
+        </article>
+        <article class="card">
+          <h3 class="card__name">Verde Shop</h3>
+          <p class="card__desc">E-commerce design for an eco-friendly store</p>
+          <a class="card__link" href="https://example.com/verde">View</a>
+        </article>
+        <article class="card">
+          <h3 class="card__name">Nota App</h3>
+          <p class="card__desc">UI/UX for a note-taking mobile app</p>
+          <a class="card__link" href="https://example.com/nota">View</a>
+        </article>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

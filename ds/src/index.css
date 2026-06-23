@@ -1,0 +1,7 @@
+/* Design tokens are the single source of truth — see tokens.css.
+   @import must precede other statements, so it sits above the Tailwind layers. */
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

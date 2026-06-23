@@ -1,0 +1,284 @@
+/* DS-Big — tokens.css — R1 — 2026-06-23
+   Source: Figma hweXsvd1QXslnovecOVKzy
+   Primitives (6051:2, 49 vars) · Tokens (6051:41, 26 vars) · 9 text-style utilities
+   Single source of truth — no raw values outside :root Layer 1 or @font-face src:
+   Layer 1 (:root) holds primitive raw values · Layer 2 (:root) holds token var() aliases
+   Naming: Figma "/" → CSS "-", prefix "--", negatives use "neg" (space/-1 → --space-neg-1)
+   =========================================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── @font-face ─────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: 'Pixform';
+  src: url('/fonts/Pixform.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akkurat LL Cyr TT';
+  src: url('/fonts/AkkuratLLCyrTT-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akkurat LL Cyr TT';
+  src: url('/fonts/AkkuratLLCyrTT-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/InstrumentSerif-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/InstrumentSerif-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ── :root — Layer 1: Primitives ──────────────────────────────────────── */
+
+:root {
+
+  /* color/ (21) */
+  --color-white:        #ffffff;
+  --color-black:        #000000;
+  --color-gray-50:      #f2f2f2;
+  --color-gray-100:     #eaeaea;
+  --color-gray-200:     #cbcbcb;
+  --color-gray-400:     #979797;
+  --color-yellow:       #ffe900;
+  --color-yellow-100:   #fffd9e;
+  --color-yellow-200:   #e0e2a4;
+  --color-yellow-dark:  #646905;
+  --color-purple:       #9747ff;
+  --color-purple-200:   #ddd6ef;
+  --color-red:          #cc0000;
+  --color-red-100:      #ffe3f1;
+  --color-red-200:      #f7e0dd;
+  --color-red-300:      #fad5e7;
+  --color-red-400:      #f5cfca;
+  --color-teal:         #00867b;
+  --color-teal-200:     #d4eee7;
+  --color-gold:         #d1a63b;
+  --color-sage:         #b8c6c3;
+
+  /* font/family/ (3 — exact strings from Figma primitives) */
+  --font-family-pixel:    'Pixform';
+  --font-family-grotesk:  'Akkurat LL Cyr TT';
+  --font-family-antiqa:   'Instrument Serif';
+
+  /* font/size/ (8 — px) */
+  --font-size-8:    8px;
+  --font-size-10:  10px;
+  --font-size-11:  11px;
+  --font-size-15:  15px;
+  --font-size-20:  20px;
+  --font-size-30:  30px;
+  --font-size-40:  40px;
+  --font-size-84:  84px;
+
+  /* font/weight/ (2) */
+  --font-weight-400:  400;
+  --font-weight-700:  700;
+
+  /* space/ (10 — px; negatives use "neg" prefix) */
+  --space-neg-8:  -8px;
+  --space-neg-1:  -1px;
+  --space-2:       2px;
+  --space-4:       4px;
+  --space-8:       8px;
+  --space-14:     14px;
+  --space-20:     20px;
+  --space-24:     24px;
+  --space-30:     30px;
+  --space-90:     90px;
+
+  /* radius/ (4 — px) */
+  --radius-4:    4px;
+  --radius-8:    8px;
+  --radius-12:   12px;
+  --radius-999:  999px;
+
+  /* size/ (1 — px) */
+  --size-830:  830px;
+
+}
+
+/* ── :root — Layer 2: Tokens ─────────────────────────────────────────── */
+
+:root {
+
+  /* text/ */
+  --text-primary:      var(--color-black);
+  --text-secondary:    var(--color-gray-400);
+  --text-on-color:     var(--color-white);
+  --text-yellow-dark:  var(--color-yellow-dark);
+
+  /* surface/ */
+  --surface-page:                var(--color-gray-50);
+  --surface-card-default:        var(--color-white);
+  --surface-card-red:            var(--color-red-400);
+  --surface-card-pink:           var(--color-red-300);
+  --surface-card-green:          var(--color-teal-200);
+  --surface-card-violet:         var(--color-purple-200);
+  --surface-card-yellow:         var(--color-yellow-200);
+  --surface-card-on-card-red:    var(--color-red-200);
+  --surface-card-on-card-pink:   var(--color-red-100);
+  --surface-card-on-card-green:  var(--color-teal-200);
+  --surface-card-on-card-violet: var(--color-purple-200);
+  --surface-card-on-card-yellow: var(--color-yellow-100);
+
+  /* border/ */
+  --border-default:  var(--color-gray-100);
+
+  /* control/ */
+  --control-secondary:  var(--color-gray-100);
+  --control-on-color:   var(--color-white);
+
+  /* bar/ */
+  --bar-on-base-filled:  var(--color-sage);
+  --bar-on-base-empty:   var(--color-white);
+
+  /* status/ */
+  --status-info:     var(--color-purple);
+  --status-success:  var(--color-teal);
+  --status-error:    var(--color-red);
+
+  /* accent/ */
+  --accent-default:  var(--color-yellow);
+  --accent-gold:     var(--color-gold);
+
+  /* state/ — semi-transparent overlays for interaction (R2) */
+  --state-hover:       rgba(0, 0, 0, 0.06);
+  --state-pressed:     rgba(0, 0, 0, 0.12);
+  --state-focus-ring:  var(--color-black);
+
+}
+
+/* ── Text-style utility classes (9 — from local Figma text styles) ────── */
+
+.text-h1 {
+  font-family: var(--font-family-antiqa);
+  font-weight: var(--font-weight-400);
+  font-size: var(--font-size-84);
+  line-height: 76px;
+}
+.text-h2 {
+  font-family: var(--font-family-antiqa);
+  font-weight: var(--font-weight-400);
+  font-size: var(--font-size-40);
+  line-height: 36px;
+}
+.text-h3 {
+  font-family: var(--font-family-grotesk);
+  font-weight: var(--font-weight-700);
+  font-size: var(--font-size-20);
+  line-height: 18px;
+}
+.text-h4 {
+  font-family: var(--font-family-grotesk);
+  font-weight: var(--font-weight-700);
+  font-size: var(--font-size-15);
+  line-height: 14px;
+}
+.text-description {
+  font-family: var(--font-family-pixel);
+  font-weight: var(--font-weight-400);
+  font-size: var(--font-size-30);
+  line-height: 27px;
+}
+.text-text-pixel {
+  font-family: var(--font-family-pixel);
+  font-weight: var(--font-weight-400);
+  font-size: var(--font-size-10);
+  line-height: 9px;
+}
+.text-text-grotesk {
+  font-family: var(--font-family-grotesk);
+  font-weight: var(--font-weight-400);
+  font-size: var(--font-size-11);
+  line-height: 10px;
+}
+.text-text-grotesk-bold {
+  font-family: var(--font-family-grotesk);
+  font-weight: var(--font-weight-700);
+  font-size: var(--font-size-11);
+  line-height: 10px;
+}
+.text-caps {
+  font-family: var(--font-family-grotesk);
+  font-weight: var(--font-weight-400);
+  font-size: var(--font-size-8);
+  line-height: 7px;
+  text-transform: uppercase;
+}
+
+/* ── Interaction utility (R2) ────────────────────────────────────────────
+   Apply .ds-interactive to any interactive leaf element.
+   ::after overlay darkens any token background uniformly without a sibling.
+   ─────────────────────────────────────────────────────────────────────── */
+
+.ds-interactive {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform        140ms ease-out,
+    background-color 140ms ease-out,
+    border-color     140ms ease-out,
+    color            140ms ease-out,
+    box-shadow       140ms ease-out;
+}
+.ds-interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: transparent;
+  transition: background 140ms ease-out;
+}
+.ds-interactive:not([aria-disabled='true']):hover::after {
+  background: var(--state-hover);
+}
+.ds-interactive:not([aria-disabled='true']):active {
+  transform: translateY(1px);
+}
+.ds-interactive:not([aria-disabled='true']):active::after {
+  background: var(--state-pressed);
+}
+.ds-interactive:focus-visible {
+  outline: 2px solid var(--state-focus-ring);
+  outline-offset: 2px;
+}
+.ds-interactive[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-interactive {
+    transition:
+      background-color 140ms ease-out,
+      border-color     140ms ease-out,
+      color            140ms ease-out,
+      box-shadow       140ms ease-out;
+  }
+  .ds-interactive::after { transition: none; }
+  .ds-interactive:not([aria-disabled='true']):active { transform: none; }
+}
