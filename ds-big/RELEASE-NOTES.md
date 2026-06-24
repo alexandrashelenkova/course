@@ -584,3 +584,7 @@ Note: `control/secondary` → gray-100 (#eaeaea) — matches the real old value.
 ## React caveat (later stage, not now)
 
 H3/H4 use weight 700 (Bold). `font/weight/` has only 400 and 700 — no Semibold needed. The AkkuratLLCyrTT-Bold.ttf file in `public/fonts/` satisfies this.
+
+---
+
+**2026-06-24 — `0bb2acb`** — Page 1 (AllTeams hero + metric/team grid) and Page 2 (candidate card, achievements, personal dev, relations) built and polished; Dropdown atom functional with open/close, in-place arrow rotation, and pressed overlay; Btn On-color active state; Profile avatar mix-blend-multiply; Pages sidebar links open in new tab.
