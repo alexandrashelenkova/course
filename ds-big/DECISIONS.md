@@ -1023,3 +1023,9 @@ No padding changes needed — all values already match Figma. Only the blend-mod
 ## pages-new-tab — 2026-06-24
 
 Added `newTab: true` to the `page1` and `page2` entries in `NAV_CONFIG` (Sidebar.jsx); subsection render now checks `sub.newTab` first and uses `<a href={sub.path} target="_blank" rel="noopener noreferrer">` for those two links. All other nav links (Styles/Atoms/Molecules/Organisms `<Link>` and anchor `<a>` subsections) unchanged.
+
+---
+
+## vercel-spa-rewrite — 2026-06-24
+
+Added `vercel.json` with catch-all SPA rewrite (`/(.*) → /index.html`) so `/page1` and `/page2` (and all client-side routes) are served by `index.html` on direct load instead of returning a 404.
