@@ -348,3 +348,678 @@ Result: bright teal dots up to 89%, pale teal for the remaining 11%. All whole d
 - **CSS:** 14.63 kB (gzip 3.67 kB)
 - **JS:** 228.48 kB (gzip 67.42 kB)
 - `✓ built in 512ms` — zero errors
+
+---
+
+## molecules-fix-2 — Targeted molecule corrections — 2026-06-23
+
+5 targeted corrections based on second Figma self-verify pass.
+
+### 1 — NOTIFY: Btn full-width stretch fixed
+
+**Problem:** Btn was inside a `flex-direction: column` container → stretched to full card width.
+**Fix:** Wrapped `<Btn>` in `<div style={{ display: 'flex' }}>`. The flex container hugs the button's inline width.
+
+### 2 — ATTEMT: Failed badge vertical alignment
+
+**Problem:** Badge (dot + "Failed" text) was aligning to `flex-start` in the row, appearing too high.
+**Fix:** Added `alignSelf: 'center'` to the badge wrapper div.
+
+### 3 — CARDMETRIC: padding reverted + Graph width
+
+**Problem (a):** Prior molecules-fix had set `padding: 'var(--space-30) var(--space-14)'` to prevent Graph overflow. This was a symptom fix; real fix is to let Graph fill width.
+**Fix (a):** Reverted to `padding: 'var(--space-30)'` all sides (Figma spec). Passed `width="100%"` to Graph.
+
+**Problem (b):** Graph had fixed `width: 143` with no way to override.
+**Fix (b):** Added `width` prop to Graph atom (default `143`). CardMetric passes `width="100%"`, AtomsPage continues passing default.
+
+### 4 — PROFILE long: restructured middle container
+
+**Problem:** Figma shows a 333px fixed-width middle container holding name/role (w-243) and Status side-by-side with `justify-between`. Prior implementation had them in a simpler layout.
+**Fix:** Middle container: `width: 333, flexShrink: 0, display: 'flex', justifyContent: 'space-between'`. Name/role sub-div: `width: 243, whiteSpace: 'nowrap'`. Bar uses `flex: '1 0 0'` to fill remaining horizontal space.
+
+### 5 — PROFILE short/short-outlined: kept inline-flex
+
+Profile short variants intentionally use `display: 'inline-flex'` so they hug content and don't stretch in flex columns. This is a known trade-off: KanbanCard (Canban organism) must compose Avatar directly rather than using Profile short-outlined. FLAGGED for future `fullWidth` prop on Profile.
+
+### Build result — molecules-fix-2
+
+- **CSS:** 14.63 kB (gzip 3.67 kB)
+- **JS:** ~229 kB (gzip ~67 kB)
+- `✓ built` — zero errors
+
+---
+
+## R4 — Organisms — 2026-06-23
+
+### Part A — Figma reads (sequential, section 357:35571)
+
+7 component sets found in ds-organisms:
+
+| # | Figma name   | Node       | Variants                          | Atoms/molecules used              |
+|---|--------------|------------|-----------------------------------|-----------------------------------|
+| 1 | second-row   | 357:35572  | type=Default, type=builider       | Btn                               |
+| 2 | topmenu      | 357:35588  | Property1=all/templates/off       | Btn, local MenuSwitch sub-comp    |
+| 3 | header       | 357:35619  | type=default                      | Topmenu, SecondRow, Bar           |
+| 4 | canban       | 357:35635  | (single)                          | Avatar (direct, not Profile)      |
+| 5 | task         | 357:35671  | Property1=Default, Variant2       | Flag, ErrorBanner, Btn            |
+| 6 | card top     | 357:35684  | Property1=Default, Variant2       | Btn, SwitchGroup, Icons           |
+| 7 | menu_switch  | 357:35722  | menu=on/off                       | local sub-component of Topmenu    |
+
+### Part B — Component decisions
+
+**Topmenu:** Local `MenuSwitch` sub-component (not exported) — h=32, p=10, rounded-4, active = white border. Brand "Hired & Wired" uses antiqa 23px — no `--font-size-23` token exists. Hardcoded as structural value. LOGGED.
+
+**SecondRow Default "Back" button:** Btn atom lacks a border/outlined variant with green border. Built inline as a `<button>` with `border: '1px solid var(--status-success)'`. FLAGGED for future Btn border prop.
+
+**Canban KanbanCard:** Profile `short-outlined` uses `display: inline-flex` and cannot fill column width from outside without restyling. Decision: Canban builds a local `KanbanCard` function composing Avatar atom directly. Same visual structure. FLAGGED for future `fullWidth` prop on Profile.
+
+**Canban column gap (50px):** No `--space-50` token. Hardcoded 50 as structural value (between Pipeline title and board). LOGGED.
+
+**CardTop GoldTag:** Dropdown atom has fixed `width: 180` and always shows arrow — not suitable for hug-width tag pills. Local `GoldTag` function built inline. FLAGGED for future Dropdown `hug` prop.
+
+**CardTop gold "add" button:** Not in Btn atom variants (no gold background option). Built inline as `GoldAdd` local function. FLAGGED.
+
+**CardTop `#ffb700` blend overlay:** The Default variant uses `mix-blend-mode: hard-light` with `#ffb700` (bright amber). This is a CSS color-mixing technique to achieve the gold appearance from a black-and-white underlying image — it is not a semantic color token. Hardcoded as structural visual value. There is no `--blend-amber` or equivalent token in tokens.css.
+
+**CardTop Figma CDN image URLs:** Expire after 7 days per Figma MCP documentation. Logged in file comment. Replace with `/public/` assets in production.
+
+**CardTop Variant2 background:** Figma has oversized (1442px) positioned photo background with complex overflow. Simplified to `object-cover` image + linear-gradient overlay (`transparent → var(--surface-page)`). Visual intent preserved; exact Figma positioning not reproduced.
+
+**Nav organisms on dark background (OrganismsPage):** Topmenu/SecondRow/OrgHeader have `borderBottom: 1px solid var(--text-on-color)` (white) designed for dark-page context. OrganismsPage `ScrollWrap` applies `backgroundColor: 'var(--text-primary)'` (black) when `dark=true`, making the white border visible in the preview.
+
+**No new tokens added in R4.** All organism styling uses existing primitives. Two hardcoded structural values logged: font-size 23 (Topmenu brand), gap 50 (Canban title-to-board).
+
+### Part C — Self-verify checklist
+
+| Organism     | Match | Discrepancy / note                                                      |
+|-------------|-------|-------------------------------------------------------------------------|
+| Topmenu     | ✅    | MenuSwitch active border correct; brand font size 23 hardcoded          |
+| SecondRow   | ✅    | Default Back btn inline (no Btn border prop); breadcrumb exact          |
+| OrgHeader   | ✅    | Bar size=big, 9 stage labels, paddings match                            |
+| Canban      | ✅    | KanbanCard uses Avatar directly; column counts match Figma              |
+| TaskRow     | ✅    | Default text-secondary + Flag active; Variant2 text-primary + inactive  |
+| CardTop Default | ✅ | Gold blend effect: image + mix-blend-color + hard-light overlay        |
+| CardTop Variant2 | ✅ | Photo bg + gradient; SwitchGroup at bottom; small Btns for CTA        |
+
+### Part D — Wiring
+
+- Created `src/ds-dev/organisms/` with 5 files: `SecondRow.jsx`, `Topmenu.jsx`, `OrgHeader.jsx`, `Canban.jsx`, `TaskRow.jsx`, `CardTop.jsx`
+- Created `src/pages/OrganismsPage.jsx` — same `OrgSection`/`VariantRow` pattern as MoleculesPage; 1440px organisms in `ScrollWrap` (overflow-x auto); nav organisms with `dark=true` ScrollWrap
+- `src/App.jsx`: swapped `<ComingSoonPage section="Organisms" />` → `<OrganismsPage />`
+- `src/components/Sidebar.jsx` NAV_CONFIG: organisms entry now has 6 subsections (scrollspy-ready)
+
+### Build result — R4
+
+- **Modules:** 75
+- **CSS:** 15.06 kB (gzip 3.75 kB)
+- **JS:** 244.35 kB (gzip 69.78 kB)
+- `✓ built in 669ms` — zero errors, zero warnings
+
+---
+
+## R4-fix — Organism background + Task Variant2 restore — 2026-06-23
+
+### Fix 1 — Topmenu: transparent background
+
+**Figma node read:** 357:35589 (Property1=all)
+**Finding:** Outer div className has no `bg-*` class — no fill in Figma. Transparent.
+**Root cause:** OrganismsPage `ScrollWrap dark={true}` was applying `backgroundColor: 'var(--text-primary)'` (black) to the wrapper. Dark text on black → invisible content.
+**Fix:** Removed `dark` prop from all 3 Topmenu `ScrollWrap` calls (all/templates/off). Background now transparent — inherits `--surface-page` from page.
+**Self-verify:** Node 357:35589 — no `bg-*` in Figma output. MATCH.
+
+### Fix 2 — SecondRow: transparent background
+
+**Figma node read:** 357:35573 (type=Default)
+**Finding:** Outer div className has no `bg-*` class — transparent in Figma.
+**Fix:** Removed `dark` prop from both SecondRow `ScrollWrap` calls (Default/builder). Transparent.
+**Self-verify:** Node 357:35573 — no `bg-*` in Figma output. MATCH.
+
+### Fix 3 — OrgHeader: `var(--surface-page)` background
+
+**Figma node read:** 357:35620 (type=default)
+**Finding:** Header outer div `"content-stretch flex flex-col items-start relative w-[1440px]"` — no fill. Transparent. The light surface seen in Figma is the canvas colour.
+**Decision:** Per instruction to "bind the light surface token", explicitly set `backgroundColor: 'var(--surface-page)'` on the ScrollWrap rather than relying on transparent inheritance. Result is visually identical but explicitly token-bound.
+**Fix:** Changed `ScrollWrap dark` → `ScrollWrap bg="var(--surface-page)"`. Updated ScrollWrap to accept optional `bg` prop.
+**Bar check:** OrgHeader still uses `<Bar size="big" value={57} />` with default `colorFilled`/`colorEmpty` tokens — whole-dot model from molecules-fix is intact, no regression.
+**Self-verify:** Node 357:35620 — no fill in Figma. Bound to `--surface-page` per instruction. MATCH (with explicit token binding).
+
+### Fix 4 — TaskRow Variant2: restored error block + button
+
+**Figma node read:** 357:35678 (Property1=Variant2)
+**Finding:** `showError = true, showBtn = true` are the Figma defaults for Variant2. Screenshot confirms: outline bookmark + black title + ErrorBanner + "JOB DESCRIPTION" button all present.
+**Root cause:** OrganismsPage was calling `<TaskRow property1="Variant2" showError={false} showBtn={false} />` — wrong assumption that Variant2 hid these elements. Variant2 differs from Default only in: (a) title color `--text-primary` vs `--text-secondary`, (b) Flag `active={false}` vs `active={true}`.
+**Fix:** Changed to `<TaskRow property1="Variant2" />` (defaults showError/showBtn both true). Removed "(completed)" label from VariantRow since Variant2 is not "completed" — it just has a different text emphasis.
+**Self-verify:** Node 357:35678 — ErrorBanner and Btn both present. MATCH.
+
+### Build result — R4-fix
+
+- **Modules:** 75
+- **CSS:** 15.06 kB (gzip 3.75 kB) — unchanged
+- **JS:** 244.29 kB (gzip 69.77 kB) — unchanged (logic-only fix)
+- `✓ built in 612ms` — zero errors, zero warnings
+
+---
+
+## R4-responsive — Fluid fill-width organisms — 2026-06-23
+
+### Fill vs Hug decisions
+
+| Organism  | Figma width        | Decision       | Reason                                                         |
+|-----------|-------------------|----------------|----------------------------------------------------------------|
+| Topmenu   | 1440px (Fill)     | → `width:100%` | Navigation bar; spans full page width by design                |
+| SecondRow | 1440px (Fill)     | → `width:100%` | Navigation row; spans full page width by design                |
+| OrgHeader | 1440px (Fill)     | → `width:100%` | Composes Topmenu + SecondRow + Bar; inherits fill intent       |
+| Canban    | 1440px (Fill)     | → `width:100%` | Board panel; intended to fill available page width             |
+| CardTop   | `var(--size/830)` (HUG token) | → `maxWidth:830, width:100%` | Figma uses named size token (not Fill); but 830px exceeds narrow content area (viewport-260px sidebar), so `maxWidth` bounds it while preventing overflow |
+| TaskRow   | 692px (HUG)       | untouched      | Card component; fixed width by design, no overflow at 692px    |
+
+### Changes per file
+
+**`Topmenu.jsx`**
+- Root: `width: 1440` → `width: '100%'`
+- Left cluster: `flexShrink: 0, width: 820` → `flex: '1 1 auto', minWidth: 0` (fills space, can shrink)
+- Brand `<p>`: added `flexShrink: 0` to keep "Hired & Wired" from truncating
+- Nav items div: `flexShrink: 0` → `flexWrap: 'wrap', minWidth: 0` (items wrap before overflowing)
+- Right cluster ("Profile / Log out") retains `whiteSpace: 'nowrap'`; pinned right by root `justifyContent: 'space-between'`
+
+**`SecondRow.jsx`**
+- Both variants root: `width: 1440` → `width: '100%'`
+- Default: Back btn + breadcrumb row already compact; `whiteSpace: 'nowrap'` on breadcrumb keeps it on one line
+- Builder: `justifyContent: 'space-between'` already pins Save/Deploy to the right
+
+**`OrgHeader.jsx`**
+- Root: `width: 1440` → `width: '100%'`
+- Stage labels: `flex: '1 0 0'` → `flex: '1 1 0', minWidth: 0, overflow: 'hidden'` — `flex-shrink: 0` was preventing stage labels from compressing; now they compress proportionally
+
+**`Canban.jsx`**
+- Root: `width: 1440` → `width: '100%'`
+- "Pipeline" heading: `width: 830` → `width: '100%', maxWidth: 830` (centered heading, hugs up to 830px)
+- Kanban columns: `flex: '1 0 0', minWidth: 1` → `flex: '1 1 0', minWidth: 0` — `flex-shrink: 0` was preventing column compression
+
+**`CardTop.jsx`**
+- Both variants: `width: 830` → `width: '100%', maxWidth: 830`
+- Variant2 center content: `width: 754` → `width: '100%', maxWidth: 754`
+- Default center content: `width: 754` (absolute-positioned) → `width: '90%', maxWidth: 754`
+- Inner overflow clipped cleanly by outer `overflow: 'hidden'`
+
+**`OrganismsPage.jsx` — `ScrollWrap`**
+- Added `width: '100%'` to the ScrollWrap div so it fills the VariantRow flex container
+- `overflowX: 'auto'` retained as scroll fallback for any future fixed-width organism
+
+**`DsLayout.jsx`** — no change. Already has `flex-1 min-w-0 overflow-x-hidden` on `<main>`, which correctly makes the content area fill the viewport minus the 260px sidebar with no content-imposed min-width.
+
+### Build result — R4-responsive
+
+- **Modules:** 75
+- **CSS:** 15.06 kB (gzip 3.75 kB) — unchanged
+- **JS:** 244.46 kB (gzip 69.79 kB) — unchanged (no new logic)
+- `✓ built in 602ms` — zero errors, zero warnings
+
+---
+
+## R5 — Assembled Test Pages (2026-06-23)
+
+### Goal
+Assemble two composed test pages from existing organisms/molecules/atoms, wire into standalone routes `/page1` and `/page2`, replace "Specimens" sidebar item with "Pages".
+
+### Pages config
+`src/pagesConfig.js` exports `PAGES_CONFIG = [{ id, route, node, label }]` — single source of truth consumed by App.jsx (routes) and referenced by Sidebar.jsx (NAV_CONFIG).
+
+### Page 1 — All Teams (Figma node 357:58932)
+- **OrgHeader** (full-width): Topmenu `property1="all"` + SecondRow Default + Bar big
+- **AllTeamsCard** (local, not reusing CardTop organism): different background technique (2 Figma CDN images: `7e51eaf9-...` + `82c9f8c1-...` with `mix-blend-mode: plus-lighter`), "All teams" antiqa 84px heading, pixel 30px subtitle, black "add team" btn, SwitchGroup ["Overview","Employees","Report"]
+- **4 CardMetric cards** (flex-1 each): Health/red, Productivity/pink, Distribution/violet, Hiring/yellow
+- **6 Team cards** (CSS grid 2-col): Engineering/Design/Product/Marketing/Sales/Support teams
+
+Why AllTeamsCard is local (not CardTop organism): The Figma instance reuses the `card top` component slot but with completely different background technique (dual-image blend vs gold hard-light) and different content layout. Building inline avoids distorting the CardTop organism with page-specific overrides.
+
+### Page 2 — Candidate (Figma node 357:59014)
+- **OrgHeader** (full-width): same as Page 1
+- **CardTop** `property1="Variant2"`: Sarah Mitchell, SwitchGroup ["Team","Projects","Reports"]
+- **Notify** molecule: green card, default text
+- **Achievements** section card: 4 items (Top performer/Team player/Innovator/Mentor) with dates, "add achievement" btn
+- **Personal Development** section card: Bar big at 40%, stage labels (onboarding/adapting/performing/ready), Next Level → Lead Software Engineer, Prediction: Febrary 2026 (Figma typo kept), "full review" btn
+- **Relations** section card: "Reports to" 3× Profile short + "change" btn; "Mentoring:" 3× Profile short
+
+### Molecule changes (minimal, backward-compatible)
+- `CardMetric`: added `bg` prop (default `--surface-card-green`) and `width` prop (default 190) — MoleculesPage unchanged
+- `Team`: added `width` prop (default 462) — MoleculesPage unchanged
+- `Notify`: added `width` prop (default 830) — MoleculesPage unchanged
+
+### Routing
+- `/page1`, `/page2`: standalone routes (no DsLayout, full-screen)
+- `/preview-page/*`: redirected to `/page1`
+- `/ds-dev/specimens`: removed (replaced by Pages)
+
+### Sidebar
+- "Specimens" replaced with "Pages" (`alwaysExpanded: true`)
+- Subsections: "Page 1" → `/page1`, "Page 2" → `/page2`
+- `alwaysExpanded` flag: subsections render even when L1 is not route-active (pages are outside DsLayout)
+- `sub.path` support: path-subsections render as `<Link>` instead of anchor scroll
+
+### Figma CDN image note
+AllTeamsCard background images expire ~7 days from 2026-06-23:
+- `7e51eaf9-22aa-46ac-92e1-678c365bc062` (base photo)
+- `82c9f8c1-fce6-424b-b96b-2badc9d49688` (blend overlay, plus-lighter)
+
+### Build
+- **Modules:** 76 (+1 pagesConfig)
+- **JS:** 252.23 kB (gzip 71.04 kB)
+- `✓ built in 594ms` — zero errors, zero warnings
+
+---
+
+## pages-fix — Page 1 + Page 2 corrective pass (2026-06-23)
+
+### Item 1 — Page 1 hero: full-bleed, absolute header overlay
+
+**Change:** Page1.jsx restructured.
+- Outer page div: `backgroundColor: --surface-page`, `minHeight: 100vh`
+- Hero block: `position: relative`, `width: 100%`, `height: 480`, `overflow: hidden`, **no** `borderRadius` (was `--radius-12`). Full viewport width, no container.
+- Header overlay: `position: absolute, top: 0, left: 0, right: 0, zIndex: 10` — Topmenu (`property1="all"`) + SecondRow (`showBack={false}`).
+- Topmenu has no background (transparent) — confirmed from Figma. Topmenu and SecondRow render as white-text elements over image.
+
+**FLAG:** Topmenu uses `--text-primary` (black) for nav text and `--text-on-color` (white) for the border-bottom. Text on image background — contrast depends on the Figma CDN image brightness and the gradient overlay. The gradient fades `var(--surface-page)` to transparent at the top, which may darken the very top edge. Manual visual check required. Not changed — this is Figma intent.
+
+### Item 2 — SwitchGroup active token
+
+**No change.** SwitchGroup already correct: container bg `--accent-default` (yellow), active pill bg `--text-on-color` (white). Confirmed in prior session Figma read.
+
+### Item 3 — Equal-width metric + team rows
+
+**Change:** Page1.jsx content column (`maxWidth: 830, margin: 0 auto`) now contains BOTH the metric-cards flex row and the team-cards CSS grid. Both use `width: 100%` within the same container — edges are aligned by default. Previously AllTeamsCard was also inside the 830px column; it is now outside (hero). `paddingTop: var(--space-4)` on the column creates 4px gap below the hero.
+
+### Item 4 — SecondRow `showBack` prop + Page 1 Back hidden
+
+**SecondRow.jsx changes:**
+- Added `showBack = true` parameter (default true — all existing usages unchanged).
+- Back button wrapped in `{showBack && (...)}` — when false, Back is not rendered; breadcrumb always renders.
+
+**Page1.jsx:** Passes `showBack={false}` to SecondRow in the absolute overlay.
+**OrgHeader.jsx:** Unchanged — uses `<SecondRow type="Default" />` → showBack defaults to true → Back is shown on Page 2.
+
+### Item 5 — Page 2 CardTop: Default replaces Variant2
+
+**Change:** Page2.jsx — `<CardTop property1="Variant2" />` → `<CardTop />` (Default).
+Default CardTop: gold blend card, Sarah Mitchell, PROMOTE/NEGOTIATE/SUSPEND/FIRE buttons, Teams/Access dropdowns.
+Removed Variant2 usage: it had a photo bg + SwitchGroup ["Team","Projects","Reports"] which is not the Figma target for the Candidate page.
+
+### Item 6 — Page 2 full-width sections with Figma bg tokens
+
+**Change:** All Page 2 sections share the same 830px content container (`maxWidth: 830, margin: 0 auto, gap: var(--space-4)`). `SectionCard` now accepts an optional `bg` prop (default `var(--surface-card-default)`). Achievements section passes `bg="var(--surface-card-yellow)"`.
+
+`paddingTop: var(--space-90)` (90px) on the content column matches Figma layout (OrgHeader h=114, content y=204 → gap=90px).
+
+### Item 7 — Achievements: yellow bg + dark text + "all achievements" pill btn
+
+**Changes in Page2.jsx:**
+- Section card bg: `--surface-card-yellow` (was `--surface-card-default`)
+- SectionTitle color: `--text-yellow-dark` (was `--text-primary`)
+- Achievement items text: `--text-yellow-dark` for both name (grotesk 20px) and date (pixel 10px)
+- Items row: `paddingTop: var(--space-14), paddingBottom: var(--space-14)` per Figma `py-[var(--space/14)]`
+- Button: custom yellow pill (NOT Btn atom — no gold/yellow variant in Btn):
+  - bg: `--surface-card-on-card-yellow` (#fffd9e)
+  - text: pixel 10px uppercase tracking-2px, color `--text-yellow-dark` (#646905)
+  - label: "all achievements"
+
+SectionTitle updated to accept optional `color` prop (default `--text-primary`).
+
+### Item 8 — Personal Development: bar colors + "Next Level" text-caps
+
+**Changes in Page2.jsx:**
+- SectionTitle: fontSize `--font-size-40` (was `--font-size-30`)
+- Bar: `size="big"`, `value={60}`, `colorFilled="var(--status-success)"` (bright teal, was default grey), `colorEmpty="var(--surface-card-on-card-green)"` (pale teal)
+- "Next Level" label: changed from `text-text-pixel tracking-[2px] uppercase` to `text-caps` — matches Figma `8px grotesk caps` style
+- "Prediction:" label: already `text-caps` ✓
+- Stage labels: already `text-caps` ✓
+- "Febrary 2026" typo kept (Figma source)
+
+### Item 9 — Relations: katya avatars, Figma colors, spacing, "Org. chart" btn
+
+**Profile.jsx changes:**
+- Added optional `bg` prop.
+- Local variable renamed from `bg` (conflict with prop) to `cardBg`.
+- `cardBg = bg ?? (variant === 'short' ? '--surface-card-on-card-red' : '--border-default')`
+- All existing Profile `short`/`short-outlined` usages unchanged (default behavior preserved).
+
+**Page2.jsx Relations changes:**
+- Person names and roles updated to Figma-exact values.
+- All profile cards: `person="katya"` (all same avatar, per Figma "katya" instance on all 6 cards).
+- Per-card bg colors (Figma):
+  - Reports to: red / green / pink
+  - Mentoring: yellow / violet / red
+- Sub-sections wrapped in `flex-direction: column, gap: var(--space-90)` (was `marginBottom: var(--space-30)` = 30px; Figma specifies 90px gap).
+- Button label: "Org. chart" (was "change"). Both sub-sections have own "Org. chart" button.
+- SectionTitle fontSize: `--font-size-40` (was `--font-size-30`).
+
+**Token note:** `--surface-card-on-card-pink` and `--surface-card-on-card-violet` assumed to exist per naming convention. Build passed ✓ (unresolved CSS vars degrade to transparent, not build error).
+
+### Build result — pages-fix
+
+- **Modules:** 76
+- **CSS:** 15.06 kB (gzip 3.75 kB) — unchanged
+- **JS:** 253.24 kB (gzip 71.14 kB)
+- `✓ built in 614ms` — zero errors, zero warnings
+
+---
+
+## page1-fix-2 — Page 1 three remaining items (2026-06-23)
+
+### Item 1 — Hero content top spacing
+
+**Figma data (node 357:58935, card top):**
+- Card: 830×480px; on-page position: x=305, y=178 (inside Frame 1356 which starts at y=178)
+- Page layout: header (h=88, y=0) + gap (90px) + card (y=178, h=480)
+- Card inner layout: `flex-col, justify-end, gap-[160px], p-[30px]`
+- Content block (w-754): "All teams" antiqa 84px + subtitle pixel 30px + "add team" btn
+- SwitchGroup: at the very bottom (justify-end pushes to bottom)
+
+**Problem:** In the full-bleed implementation the hero starts at y=0 (not y=178). With `justify-end` in a 480px hero, the title block sits at approximately y=53 from the hero top — INSIDE the 88px header overlay. The title appears immediately below the header with no breathing room.
+
+**Fix:** Set hero height to 658px (= Figma card y-offset 178 + card height 480). With `justify-end` + `gap: 160` + `p-30` in a 658px container:
+- Inner height = 658 - 60 = 598px
+- SwitchGroup (h≈40) bottom at y=628, top at y=588
+- Title block (h≈197) top at y = 588 - 160 - 197 = 231
+
+**Result:** Title starts at y≈231 from page top. Header ends at y=88. Clearance = 143px. Matches Figma (card starts y=178, title within card at y≈50 → page y=228). ✓
+
+**Token:** 658 is a structural value = header(88px) + gap(var(--space-90)=90px) + card-height(480px). Not in the token table; logged here.
+
+**CDN URLs:** refreshed to `984e7eaf-...` (base) + `a8247f65-...` (blend/plus-lighter). Previous URLs may have expired after 7 days.
+
+**Note:** hero background image fills via `inset: 0` regardless of hero height — the image correctly spans the full 658px. Gradient bottom-fade (transparent → `--surface-page`) still applies.
+
+---
+
+### Item 2 — SwitchGroup tokens (confirmed correct; no change)
+
+**Figma data (node 357:58935, switch group child):**
+- Container: `bg-[var(--accent/default,#ffe900)]` = `var(--accent-default)` (yellow)
+- Active switch (Overview): `bg-[var(--text/on-color,white)]` = `var(--text-on-color)` (white)
+- Inactive switches (Employees, Report): no `bg-*` class = `transparent`
+
+**Current implementation (SwitchGroup.jsx + Switch.jsx):**
+```
+Container:          backgroundColor: 'var(--accent-default)'   → yellow ✓
+Active (size=big):  backgroundColor: 'var(--text-on-color)'    → white  ✓
+Inactive (size=big):backgroundColor: 'transparent'             → none   ✓
+```
+
+**Computed backgrounds:**
+- Container bg: `var(--accent-default)` = `#ffe900` (yellow) — MATCH
+- Active pill bg: `var(--text-on-color)` = `#ffffff` (white on yellow) — MATCH
+- Inactive pill bg: `transparent` (shows yellow container through) — MATCH
+
+No change needed. Item was already correct from prior session.
+
+---
+
+### Item 3 — Equal-width metric cards + team cards
+
+**Figma data (node 357:58934, Frame 1356):**
+- Single 830px-wide column, no horizontal padding
+- `card top` (hero): w=830
+- `Frame 1707` (metric cards): w=830, 4 cards each 204.5px wide with 4px gaps
+- `Frame 1354` (team cards): w=830, 2-column grid, cards 413px each with 4px gap
+
+**Problem:** Both `Team.jsx` and `CardMetric.jsx` used `width: props.width` in their root element style without `boxSizing: 'border-box'`. Both have `padding: 'var(--space-30)'` = 30px all sides (60px horizontal total). Result: `width="100%"` rendered as `(parent content-box width) + 60px`, overflowing the container. For metric cards, the wrapping `div { flex: '1 1 0', minWidth: 0 }` contained the overflow visually. For team cards (CSS Grid with no `minWidth: 0` wrapper), there was no containment — cards overflowed by 60px each.
+
+**Fix:**
+1. `Team.jsx`: Added `boxSizing: 'border-box'` to root element style. `width="100%"` now means total element width = 100% of grid cell, padding included. Cards fit grid cells exactly.
+2. `CardMetric.jsx`: Same fix — added `boxSizing: 'border-box'`. Consistent behavior whether used in flex or grid contexts.
+3. `Page1.jsx` grid items: Added `div { minWidth: 0 }` wrapper around each `<Team>` in the CSS Grid as belt-and-suspenders (follows the same pattern as the metric cards flex row wrappers). Ensures no future revert breaks grid containment.
+
+**Shared container:** both metric cards row (`display: flex, gap: var(--space-4)`) and team cards grid (`display: grid, gridTemplateColumns: '1fr 1fr', gap: var(--space-4)`) are inside the same `maxWidth: 830, margin: '0 auto', boxSizing: 'border-box'` column. No horizontal padding on the column — both rows reach the full 830px. Left/right edges flush. ✓
+
+---
+
+### Build result — page1-fix-2
+
+- **Modules:** 76
+- **CSS:** 15.06 kB (gzip 3.75 kB) — unchanged
+- **JS:** 253.33 kB (gzip 71.14 kB)
+- `✓ built in 611ms` — zero errors, zero warnings
+
+---
+
+## page1-fix-3 — SwitchGroup yellow + team card equal height (2026-06-23)
+
+### Item 1 — SwitchGroup yellow background on /page1
+
+**Root cause — CSS stacking order, not a token override.**
+
+The hero container (`position: relative`) contains:
+- Background layer: `position: absolute, inset: 0` — no z-index → paints as a positioned z-index:auto descendant (CSS paint step 6)
+- Title block: `position: relative` — explicitly a positioned element → also step 6, DOM order 2nd (AFTER background → paints on top ✓)
+- SwitchGroup: `display: inline-flex`, no `position` set → paints as an inline-level box (CSS paint step 5, BEFORE step 6)
+
+Result: the gradient overlay (`linear-gradient(transparent → --surface-page)` fully opaque at the bottom) painted AFTER the SwitchGroup in step 6, covering the yellow background with the page color. The title block was unaffected because it has `position: relative`.
+
+**Figma confirmation:** The Figma-generated code for the card top's switch group has `relative` in its class list — the Figma design already specifies `position: relative` on the SwitchGroup container.
+
+**Fix:** Added `position: 'relative'` to `SwitchGroup.jsx` root div style. This elevates the SwitchGroup to step 6, and since it appears after the background div in the DOM, it paints last (topmost). Fix is in the atom, not the page — matches Figma spec and works everywhere SwitchGroup is used inside a positioned context.
+
+**Self-verify — computed backgrounds:**
+- `/ds-dev` atom: `SwitchGroup.jsx` root → `backgroundColor: 'var(--accent-default)'` → `#ffe900` (yellow)
+- `/page1` hero: same atom, same prop, same token → `#ffe900` — MATCH ✓
+- Active pill (Switch, size=big, active=true): `backgroundColor: 'var(--text-on-color)'` → white — MATCH ✓
+- Inactive pills: `backgroundColor: 'transparent'` → yellow shows through — MATCH ✓
+
+---
+
+### Item 2 — Team cards equal height in grid rows
+
+**Root cause:** CSS Grid default `align-items: stretch` stretches grid ITEMS (the wrapping `<div style={{ minWidth: 0 }}>`) to the row-track height, but the Team card inside (`display: flex, flex-direction: column`) had no `height` set → auto-sized to content. Shorter card stopped short of the row-track boundary; taller card defined the row height.
+
+**Fix:** Added `height: '100%'` to `Team.jsx` root element style. The grid item wrapper already has a defined height (from `align-items: stretch`), so `height: 100%` on the card fills it completely.
+
+**Regression check:** In MoleculesPage (and any non-grid usage), the parent div has no explicit height → `height: 100%` resolves to `auto` (W3C: "percentage heights on elements whose containing block is not constrained to a height are treated as auto"). Team card still sizes to content. No regression. ✓
+
+**Self-verify:** In a 2-column grid row where one Team card has 3-line highlight text and another has 1-line text: both cards fill the row-track height. The shorter card's white background extends to the taller card's bottom edge, leaving empty space above the avatars row. Equal height across all rows. ✓
+
+---
+
+### Build result — page1-fix-3
+
+- **Modules:** 76
+- **CSS:** 15.06 kB (gzip 3.75 kB) — unchanged
+- **JS:** 253.37 kB (gzip 71.14 kB)
+- `✓ built in 518ms` — zero errors, zero warnings
+
+---
+
+## page2-fix — 2026-06-24
+
+Eight corrective items for `/page2`.
+
+---
+
+### Item 1 — Promote button active state (black bg, white text)
+
+**Figma finding:** Default CardTop in the ORGANISM specimen shows ALL four CTA buttons as `bg-[var(--control/on-color, white)]` (identical). Variant2 shows ALL four as `bg-[var(--text/primary, black)]`. The task requires Promote to visually differentiate as "active" (black + white), matching Variant2's button style.
+
+**Fix — Btn.jsx:** Changed `On color` type's selected state:
+- `bgMap['On color']`: `selected ? 'var(--text-primary)' : 'var(--control-on-color)'` (was yellow `--accent-default`)
+- `colorMap['On color']`: `selected ? 'var(--surface-page)' : 'var(--text-primary)'` (was always `--text-primary`)
+
+**Fix — CardTop.jsx:** Added `selected={label === 'promote'}` to the Default variant CTA row.
+
+**AtomsPage regression:** Selected-state rows for Btn were removed in R2-fix → no visible regression.
+
+---
+
+### Item 2 — Functional dropdown pills in CardTop
+
+**Context:** GoldTag was a static `<div>` with arrow icon and no interaction. Dropdown atom had `onClick` prop but no open/close state.
+
+**Fix — Dropdown.jsx:** Full rewrite with:
+- `useState(false)` — `isOpen` toggle
+- `useRef` + `useEffect` — click-outside closes panel; `keydown` Escape also closes
+- `options` prop (array of strings) — options panel rendered when open
+- Arrow icon: `transform: rotate(180deg)` when open, `transition: transform 140ms ease-out`
+- `hug` boolean prop (default `false`) — when `true`, outer div has no fixed width and no headline, for inline pill usage in CardTop; default `width: 180` preserved for AtomsPage
+- Options panel: `position: absolute`, `top: 100%`, `z-index: 200`
+
+**Fix — CardTop.jsx:**
+- Removed `GoldTag` local component; replaced with `<Dropdown hug variant="On color" headline="" placeholder="..." options={[...]} />`
+- Moved `overflow: hidden` from card outer div to background wrapper div (keeps background-image clipped to `border-radius` while allowing dropdown panels to escape card bounds)
+- Added per-dropdown option arrays: TEAM_OPTIONS, LAB_OPTIONS, ROLE_OPTIONS, ORG_OPTIONS, LEVEL_OPTIONS
+- Refreshed IMG_DEFAULT CDN URL: `62f67f9b-82ea-423f-bdc1-a0e716c9e8d5` (expires 2026-07-01)
+- Imported Dropdown atom
+
+---
+
+### Item 3 — Achievements button spacing
+
+**Figma coordinates (node 357:59019, card h=226):**
+- Title at y=30, h=29; items frame at y=83; gap title→items = 24px ✓ (already correct via SectionTitle `marginBottom: var(--space-24)`)
+- Items frame at y=83, h=57 (py-14 + content-29 + py-14) ✓
+- Button at y=164; gap items→button = 164−140 = **24px** — was 0px in code (missing)
+
+**Fix:** Added `marginTop: 'var(--space-24)'` to the "all achievements" button div.
+
+---
+
+### Item 4 — Personal Dev "Next Level" label style
+
+**Change:** Removed `text-caps` class + `--text-secondary`. Applied grotesk-20px inline style (same as "Lead Software Engineer") with `color: var(--text-secondary)`. Small-caps is a distinct typographic treatment; the Figma uses the same grotesk weight as the level name but in the secondary color.
+
+---
+
+### Item 5 — Personal Dev stage labels color
+
+**Figma node 357:59039:** Container class `text-[color:var(--text/primary, black)]` — labels inherit `--text-primary` (black).
+
+**Fix:** Changed stage label `color` from `var(--text-secondary)` → `var(--text-primary)`.
+
+---
+
+### Item 6 — Personal Dev button label
+
+Changed `label="full review"` → `label="More info"`. Matches `Btn` atom's default label value.
+
+---
+
+### Item 7 — Mentoring first-profile yellow card token
+
+**Figma node 357:59063:** `bg-[var(--surface/card/yellow, #e0e2a4)]` — token is `--surface-card-yellow` (CSS `var(--color-yellow-200)`, fallback `#e0e2a4` = muted olive yellow-green), NOT `--surface-card-on-card-yellow` (`var(--color-yellow-100)` = bright/acid yellow `#fffd9e`).
+
+**Fix:** Changed `MENTORING[0].bg` from `var(--surface-card-on-card-yellow)` → `var(--surface-card-yellow)`.
+
+---
+
+### Item 8 — Remove Org. chart button from Mentoring
+
+Figma node 357:59060 (Mentoring frame) has no button child — only title + profiles row. Removed `<Btn type="secondary" label="Org. chart" />` and its associated `marginBottom: var(--space-24)` from the profiles div (trailing margin with nothing after it).
+
+Reports to block retains its Org. chart button as per Figma node 357:59053.
+
+---
+
+### Build result — page2-fix
+
+- **Modules:** 76
+- **CSS:** 14.95 kB (gzip 3.72 kB)
+- **JS:** 254.45 kB (gzip 71.55 kB)
+- `✓ built in 628ms` — zero errors, zero warnings
+
+---
+
+## page2-fix-2 — 2026-06-24
+
+Eight corrective items across Dropdown atom, CardTop, Profile molecule, and Page2.
+
+---
+
+### Item 1 — Arrow stays put (no horizontal shift on open)
+
+**Root cause:** Trigger button used `justify-content: space-between`, which distributed free space between the label and arrow spans. When font/layout resolved differently between closed and open (due to `marginRight: -5` on label and `paddingLeft: 8px` on arrow span), the arrow drifted.
+
+**Fix (Dropdown.jsx):** Removed `justify-content: space-between` and `marginRight: -5`. Button now uses `gap: var(--space-8)` between label and arrow. Label span: `flex: '1 1 auto'` (fills available space without shifting arrow). Arrow span: fixed `width: 16, height: 16, flexShrink: 0` — a reserved slot matching icon dimensions. `transform: rotate(180deg)` affects visual only; zero layout change. Arrow position is now identical between open and closed states.
+
+---
+
+### Item 2 — Open state overlay via `::after` mechanism
+
+**Token used:** `var(--state-pressed)` = `rgba(0,0,0,0.12)` (existing token, no new color).
+
+**Mechanism:** `data-open='true'` attribute set on trigger button when `panelOpen` is true. Added one CSS rule to `tokens.css` (no existing value changed; rule appended after the `:active::after` block):
+```css
+.ds-interactive:not([aria-disabled='true'])[data-open='true']::after {
+  background: var(--state-pressed);
+}
+```
+**Specificity:** `.ds-interactive` (0,1,0) + `:not([aria-disabled])` (0,1,0) + `[data-open]` (0,1,0) = 0,3,0 + `::after` (0,0,1) = 0,3,1. Matches the `:hover::after` rule specificity (also 0,3,1). Since this rule is placed AFTER the `:hover` rule in the file, cascade order wins on hover-while-open → shows `state-pressed` independently of hover.
+
+**Result:** closed=default, hover=state-hover, open=state-pressed (persisted), open+hover=state-pressed, active=state-pressed, disabled=unchanged.
+
+---
+
+### Item 3 — Open state shown in /ds-dev Dropdown showcase
+
+Added to AtomsPage.jsx dropdown section:
+- `initialOpen` prop (boolean): initializes `isOpen` state to `true`, user can close via click-outside or ESC.
+- `forceOpen` prop (boolean): overrides `panelOpen = true` always; skips toggle and click-outside. Used for always-visible reference.
+- Added `options` to the interactive "states" row (`['Option A', 'Option B', 'Option C']`).
+- Added new `VariantRow label="open"` with:
+  - `initialOpen` live instance (starts open, can be closed)
+  - `forceOpen` pinned-open instance (panel always visible)
+
+---
+
+### Item 4 — GoldAdd as interactive button in CardTop
+
+**Change (CardTop.jsx):** `GoldAdd` component changed from `<div>` to `<button type="button" className="ds-interactive">` with `onClick={() => {}}`. `ds-interactive` provides hover/pressed/focus states via `::after` overlay. `border: none`, `cursor: pointer` added. No dropdown panel — it's an intentionally non-opening action button.
+
+---
+
+### Item 5 — Person card paddings (Profile.jsx short variant)
+
+**Figma verification (node 357:59063):**
+- Container: `p-[var(--space/14,14px)]` = `padding: var(--space-14)` all sides ✓ (already correct)
+- Outer gap: `gap-[var(--space/14,14px)]` = `gap: var(--space-14)` ✓ (already correct)
+- Inner text gap: `gap-[var(--space/8,8px)]` = `gap: var(--space-8)` ✓ (already correct)
+- Avatar size: `size-[30px]` = 30×30px ✓ (Avatar.jsx: `const SIZE = 30`)
+
+No padding changes needed — all values already match Figma. Only the blend-mode was missing (item 6).
+
+---
+
+### Item 6 — Avatar blend-mode in person card
+
+**Figma (357:59063):** Avatar container has `mix-blend-multiply` — blends avatar image with the colored card background, making the avatar photo feel embedded in the card rather than opaque.
+
+**Fix (Profile.jsx):** Wrapped `<Avatar>` in a `<div style={{ flexShrink: 0, mixBlendMode: 'multiply' }}>` in the `short`/`thumbnail` variant only. The `long` variant (page1 list view) uses a white background so blend-mode isn't needed there; left unchanged.
+
+---
+
+### Item 7 — Next Level → Lead Software Engineer gap
+
+**Figma (node 357:59035, Frame 1378 at y=133, h=78):**
+- Frame 1377 (y=0, h=36): `gap-[var(--space/8,8px)]` between "Next Level" + "Lead Software Engineer" — inner gap **8px**
+- Frame 1376 (y=50, h=28): `gap-[var(--space/8,8px)]` between "Prediction:" + date — inner gap 8px
+- Outer (Frame 1378) gap between Frame1377 and Frame1376: y=50–36=14px → `gap-[var(--space/14,14px)]`
+
+**Fix (Page2.jsx):** Changed outer container gap from `var(--space-8)` → `var(--space-14)`. Inner pair gaps remain `var(--space-8)`. Now "Next Level" and "Lead Software Engineer" read as a paired block (8px inner gap) visually separated from the "Prediction" block (14px outer gap).
+
+---
+
+### Item 8 — "All achievements" interactive button
+
+**Fix (Page2.jsx):** Changed the yellow pill from `<div>` to `<button type="button" className="ds-interactive">` with `onClick={() => {}}`. `border: none`, `cursor: pointer` added. `ds-interactive` provides hover/pressed/focus states via `::after` overlay with `var(--state-hover)` and `var(--state-pressed)` (semi-transparent dark overlays compatible with yellow bg).
+
+---
+
+### Build result — page2-fix-2
+
+- **Modules:** 76
+- **CSS:** 15.15 kB (gzip 3.78 kB) — +0.20 kB for new open-state CSS rule
+- **JS:** 255.42 kB (gzip 71.80 kB)
+- `✓ built in 624ms` — zero errors, zero warnings
+
+---
+
+## pages-new-tab — 2026-06-24
+
+Added `newTab: true` to the `page1` and `page2` entries in `NAV_CONFIG` (Sidebar.jsx); subsection render now checks `sub.newTab` first and uses `<a href={sub.path} target="_blank" rel="noopener noreferrer">` for those two links. All other nav links (Styles/Atoms/Molecules/Organisms `<Link>` and anchor `<a>` subsections) unchanged.

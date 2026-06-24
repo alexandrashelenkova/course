@@ -4,6 +4,8 @@ export default function CardMetric({
   title = 'Health',
   bars  = [100, 58],
   label = 'Overall: Good',
+  bg    = 'var(--surface-card-green)',
+  width = 190,
 }) {
   return (
     <div style={{
@@ -11,8 +13,9 @@ export default function CardMetric({
       flexDirection: 'column',
       gap: 'var(--space-24)',
       padding: 'var(--space-30)',
-      width: 190,
-      backgroundColor: 'var(--surface-card-green)',
+      width,
+      boxSizing: 'border-box',
+      backgroundColor: bg,
       borderRadius: 'var(--radius-12)',
     }}>
       <p style={{

@@ -19,6 +19,7 @@ export default function SwitchGroup({
         padding: 'var(--space-4)',
         borderRadius: 'var(--radius-8)',
         backgroundColor: 'var(--accent-default)',
+        position: 'relative',
       }}
     >
       {options.map((opt) => (

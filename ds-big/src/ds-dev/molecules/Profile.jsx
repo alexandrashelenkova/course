@@ -9,6 +9,7 @@ export default function Profile({
   person   = 'katya',
   status   = 'green',
   barValue = 75,
+  bg,
 }) {
   if (variant === 'long') {
     return (
@@ -61,9 +62,9 @@ export default function Profile({
     )
   }
 
-  const bg = variant === 'short'
+  const cardBg = bg ?? (variant === 'short'
     ? 'var(--surface-card-on-card-red)'
-    : 'var(--border-default)'
+    : 'var(--border-default)')
 
   return (
     <div style={{
@@ -72,9 +73,12 @@ export default function Profile({
       gap: 'var(--space-14)',
       padding: 'var(--space-14)',
       borderRadius: 'var(--radius-4)',
-      backgroundColor: bg,
+      backgroundColor: cardBg,
     }}>
-      <Avatar person={person} />
+      {/* mix-blend-multiply makes avatar blend with the colored card bg */}
+      <div style={{ flexShrink: 0, mixBlendMode: 'multiply' }}>
+        <Avatar person={person} />
+      </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
         <p style={{
           fontFamily: 'var(--font-family-grotesk)',

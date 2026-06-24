@@ -7,6 +7,7 @@ export default function Team({
   productivity = 89,
   highlight    = 'Petya was drinking too much tea this week',
   moreCount    = 21,
+  width        = 462,
 }) {
   return (
     <div style={{
@@ -14,7 +15,9 @@ export default function Team({
       flexDirection: 'column',
       gap: 'var(--space-24)',
       padding: 'var(--space-30)',
-      width: 462,
+      width,
+      height: '100%',
+      boxSizing: 'border-box',
       backgroundColor: 'var(--surface-card-default)',
       borderRadius: 'var(--radius-12)',
     }}>

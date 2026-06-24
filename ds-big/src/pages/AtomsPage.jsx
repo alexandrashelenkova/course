@@ -159,8 +159,12 @@ export default function AtomsPage() {
           <StateLabel><SLabel>default, empty</SLabel>       <Dropdown variant="default"  value="" /></StateLabel>
         </VariantRow>
         <VariantRow label="states">
-          <StateLabel><SLabel>default (interactive)</SLabel> <Dropdown variant="default" value="frontend-team" /></StateLabel>
+          <StateLabel><SLabel>default (interactive)</SLabel> <Dropdown variant="default" value="frontend-team" options={['Option A', 'Option B', 'Option C']} /></StateLabel>
           <StateLabel><SLabel>disabled</SLabel>              <Dropdown variant="default" value="frontend-team" disabled /></StateLabel>
+        </VariantRow>
+        <VariantRow label="open">
+          <StateLabel><SLabel>live (starts open)</SLabel>    <Dropdown variant="default" placeholder="Select…" initialOpen options={['Option A', 'Option B', 'Option C']} /></StateLabel>
+          <StateLabel><SLabel>pinned open</SLabel>            <Dropdown variant="default" placeholder="Select…" forceOpen  options={['Option A', 'Option B', 'Option C']} /></StateLabel>
         </VariantRow>
       </AtomSection>
 

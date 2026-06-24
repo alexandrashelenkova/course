@@ -1,10 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import DsLayout        from './pages/DsLayout.jsx'
-import DsDevPage       from './pages/DsDevPage.jsx'
-import AtomsPage       from './pages/AtomsPage.jsx'
-import MoleculesPage   from './pages/MoleculesPage.jsx'
-import PreviewPage     from './pages/PreviewPage.jsx'
-import ComingSoonPage  from './pages/ComingSoonPage.jsx'
+import DsLayout       from './pages/DsLayout.jsx'
+import DsDevPage      from './pages/DsDevPage.jsx'
+import AtomsPage      from './pages/AtomsPage.jsx'
+import MoleculesPage  from './pages/MoleculesPage.jsx'
+import OrganismsPage  from './pages/OrganismsPage.jsx'
+import Page1          from './pages/Page1.jsx'
+import Page2          from './pages/Page2.jsx'
+import { PAGES_CONFIG } from './pagesConfig.js'
+
+const PAGE_COMPONENTS = { 1: Page1, 2: Page2 }
 
 export default function App() {
   return (
@@ -16,12 +20,17 @@ export default function App() {
           <Route path="styles"    element={<DsDevPage />} />
           <Route path="atoms"     element={<AtomsPage />} />
           <Route path="molecules" element={<MoleculesPage />} />
-          <Route path="organisms" element={<ComingSoonPage section="Organisms" />} />
-          <Route path="specimens" element={<ComingSoonPage section="Specimens" />} />
+          <Route path="organisms" element={<OrganismsPage />} />
         </Route>
 
-        {/* /preview-page — independent, no ds layout */}
-        <Route path="/preview-page/*" element={<PreviewPage />} />
+        {/* Standalone test pages — no DsLayout wrapper */}
+        {PAGES_CONFIG.map(p => {
+          const Comp = PAGE_COMPONENTS[p.id]
+          return <Route key={p.route} path={p.route} element={<Comp />} />
+        })}
+
+        {/* /preview-page redirects to /page1 */}
+        <Route path="/preview-page/*" element={<Navigate to="/page1" replace />} />
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="/ds-dev/styles" replace />} />

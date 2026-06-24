@@ -3,6 +3,7 @@ import Btn from '../atoms/Btn.jsx'
 export default function Notify({
   text    = 'Sarah finalized the UX flows, Anya trained three junior engineers, and the team enjoyed a ski trip.',
   showBtn = false,
+  width   = 830,
 }) {
   return (
     <div style={{
@@ -10,7 +11,7 @@ export default function Notify({
       flexDirection: 'column',
       gap: 'var(--space-14)',
       padding: 'var(--space-30)',
-      width: 830,
+      width,
       backgroundColor: 'var(--surface-card-green)',
       borderRadius: 'var(--radius-12)',
     }}>

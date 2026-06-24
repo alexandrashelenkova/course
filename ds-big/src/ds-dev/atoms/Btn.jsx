@@ -79,13 +79,13 @@ export default function Btn({
 
   const bgMap = {
     secondary:  selected ? 'var(--accent-default)' : 'var(--control-secondary)',
-    'On color': selected ? 'var(--accent-default)' : 'var(--control-on-color)',
+    'On color': selected ? 'var(--text-primary)'    : 'var(--control-on-color)',
     small:      'var(--text-primary)',
   }
 
   const colorMap = {
     secondary:  'var(--text-primary)',
-    'On color': 'var(--text-primary)',
+    'On color': selected ? 'var(--surface-page)' : 'var(--text-primary)',
     small:      'var(--surface-page)',
   }
 

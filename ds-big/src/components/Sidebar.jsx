@@ -56,8 +56,29 @@ export const NAV_CONFIG = [
       { id: 'notify',             label: 'notify'             },
     ],
   },
-  { id: 'organisms', label: 'Organisms', path: '/ds-dev/organisms', subsections: [] },
-  { id: 'specimens', label: 'Specimens', path: '/ds-dev/specimens', subsections: [] },
+  {
+    id: 'organisms',
+    label: 'Organisms',
+    path: '/ds-dev/organisms',
+    subsections: [
+      { id: 'topmenu',     label: 'topmenu'     },
+      { id: 'second-row',  label: 'second-row'  },
+      { id: 'header',      label: 'header'      },
+      { id: 'canban',      label: 'canban'      },
+      { id: 'task',        label: 'task'        },
+      { id: 'card-top',    label: 'card top'    },
+    ],
+  },
+  {
+    id: 'pages',
+    label: 'Pages',
+    path: '/page1',
+    alwaysExpanded: true,
+    subsections: [
+      { id: 'page1', label: 'Page 1', path: '/page1', newTab: true },
+      { id: 'page2', label: 'Page 2', path: '/page2', newTab: true },
+    ],
+  },
 ]
 
 const SCROLL_OFFSET = 80
@@ -171,28 +192,60 @@ export default function Sidebar({ onClose }) {
                 {item.label}
               </Link>
 
-              {/* Level 2 — expanded under active L1 only */}
-              {isL1Active && item.subsections.length > 0 && (
+              {/* Level 2 — expanded under active L1 or when alwaysExpanded */}
+              {(isL1Active || item.alwaysExpanded) && item.subsections.length > 0 && (
                 <div style={{ paddingBottom: 'var(--space-8)' }}>
                   {item.subsections.map(sub => {
-                    const isSubActive = activeSection === sub.id
+                    const isSubActive = sub.path
+                      ? location.pathname === sub.path
+                      : activeSection === sub.id
+                    const subClass = [
+                      'flex items-center text-caps transition-colors',
+                      isSubActive
+                        ? 'text-[var(--text-primary)]'
+                        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
+                    ].join(' ')
+                    const subStyle = {
+                      padding: 'var(--space-4) var(--space-20) var(--space-4) var(--space-30)',
+                      borderRight: isSubActive
+                        ? '2px solid var(--accent-default)'
+                        : '2px solid transparent',
+                    }
+                    if (sub.path && sub.newTab) {
+                      return (
+                        <a
+                          key={sub.id}
+                          href={sub.path}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={onClose}
+                          className={subClass}
+                          style={subStyle}
+                        >
+                          {sub.label}
+                        </a>
+                      )
+                    }
+                    if (sub.path) {
+                      return (
+                        <Link
+                          key={sub.id}
+                          to={sub.path}
+                          onClick={onClose}
+                          className={subClass}
+                          style={subStyle}
+                        >
+                          {sub.label}
+                        </Link>
+                      )
+                    }
                     return (
                       <a
                         key={sub.id}
                         href={`#${sub.id}`}
                         onClick={e => handleSubClick(e, sub.id)}
-                        className={[
-                          'flex items-center text-caps transition-colors',
-                          isSubActive
-                            ? 'text-[var(--text-primary)]'
-                            : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
-                        ].join(' ')}
-                        style={{
-                          padding: 'var(--space-4) var(--space-20) var(--space-4) var(--space-30)',
-                          borderRight: isSubActive
-                            ? '2px solid var(--accent-default)'
-                            : '2px solid transparent',
-                        }}
+                        className={subClass}
+                        style={subStyle}
                       >
                         {sub.label}
                       </a>

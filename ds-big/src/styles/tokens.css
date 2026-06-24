@@ -264,6 +264,10 @@
 .ds-interactive:not([aria-disabled='true']):active::after {
   background: var(--state-pressed);
 }
+/* Dropdown open-state — persisted pressed overlay while panel is visible */
+.ds-interactive:not([aria-disabled='true'])[data-open='true']::after {
+  background: var(--state-pressed);
+}
 .ds-interactive:focus-visible {
   outline: 2px solid var(--state-focus-ring);
   outline-offset: 2px;
