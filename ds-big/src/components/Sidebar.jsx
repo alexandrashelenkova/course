@@ -172,28 +172,41 @@ export default function Sidebar({ onClose }) {
 
           return (
             <div key={item.id}>
-              {/* Level 1 */}
-              <Link
-                to={item.path}
-                onClick={onClose}
-                className={[
-                  'flex items-center text-text-grotesk transition-colors',
-                  isL1Active
-                    ? 'text-[var(--text-primary)] bg-[var(--surface-page)]'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-page)]',
-                ].join(' ')}
-                style={{
-                  padding: 'var(--space-8) var(--space-20)',
-                  borderRight: isL1Active
-                    ? '2px solid var(--accent-default)'
-                    : '2px solid transparent',
-                  fontWeight: isL1Active
-                    ? 'var(--font-weight-700)'
-                    : 'var(--font-weight-400)',
-                }}
-              >
-                {item.label}
-              </Link>
+              {/* Level 1 — plain label (non-clickable) for alwaysExpanded sections like Pages */}
+              {item.alwaysExpanded ? (
+                <div
+                  className="flex items-center text-text-grotesk text-[var(--text-secondary)]"
+                  style={{
+                    padding: 'var(--space-8) var(--space-20)',
+                    borderRight: '2px solid transparent',
+                    fontWeight: 'var(--font-weight-400)',
+                  }}
+                >
+                  {item.label}
+                </div>
+              ) : (
+                <Link
+                  to={item.path}
+                  onClick={onClose}
+                  className={[
+                    'flex items-center text-text-grotesk transition-colors',
+                    isL1Active
+                      ? 'text-[var(--text-primary)] bg-[var(--surface-page)]'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-page)]',
+                  ].join(' ')}
+                  style={{
+                    padding: 'var(--space-8) var(--space-20)',
+                    borderRight: isL1Active
+                      ? '2px solid var(--accent-default)'
+                      : '2px solid transparent',
+                    fontWeight: isL1Active
+                      ? 'var(--font-weight-700)'
+                      : 'var(--font-weight-400)',
+                  }}
+                >
+                  {item.label}
+                </Link>
+              )}
 
               {/* Level 2 — expanded under active L1 or when alwaysExpanded */}
               {(isL1Active || item.alwaysExpanded) && item.subsections.length > 0 && (

@@ -1441,3 +1441,24 @@ Three sub-fixes on `Page4.jsx`:
 **Scope:** AtomsPage.jsx only. Dropdown component (`src/ds-dev/atoms/Dropdown.jsx`) not touched.
 
 **Build:** ✅ 85 modules, 270.81 kB JS — zero errors.
+
+---
+
+## sidebar-pages-header-non-clickable — 2026-06-26
+
+**File:** `src/components/Sidebar.jsx`, L1 render block.
+
+**Problem:** Every L1 item was rendered as `<Link to={item.path}>`. For the "Pages" section, `item.path = '/all_teams'`, so clicking the "Pages" header navigated to the All teams page in the same window.
+
+**Root cause:** The single `<Link>` render path was used for all L1 items regardless of whether the item is a section header (Pages) or an actual navigation target (Styles/Atoms/Molecules/Organisms).
+
+**Fix:** Conditioned the L1 render on `item.alwaysExpanded`:
+- `alwaysExpanded: true` → render as plain `<div>` (non-interactive, no hover, no cursor change, no navigation). Keeps same text/padding/border styling as the inactive state.
+- `alwaysExpanded` absent/false → render as `<Link>` (unchanged behavior for Styles, Atoms, Molecules, Organisms).
+
+**Other section headers checked:**
+- Styles / Atoms / Molecules / Organisms: `alwaysExpanded` not set → remain `<Link>` elements navigating to their `/ds-dev/*` routes. That IS their intended behavior — clicking them switches the showcase section. No change needed.
+
+**Subsections unchanged:** The L2 items (All teams, Team, Candidate, Hiring campaign, Automation mail editor) still render as `<a target="_blank">` (newTab: true). Behavior unaltered.
+
+**Build:** ✅ 85 modules, 271.06 kB JS — zero errors.

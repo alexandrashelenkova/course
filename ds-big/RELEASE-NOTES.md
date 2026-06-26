@@ -2,6 +2,14 @@
 
 ---
 
+## sidebar-pages-header-non-clickable — 2026-06-26
+
+Made the "Pages" section header in the `/ds-dev` sidebar non-clickable. It was a `<Link to="/all_teams">` which navigated same-window on click. Now renders as a plain `<div>` (no link, no hover, no navigation). Individual page entries (All teams, Team, Candidate, Hiring campaign, Automation mail editor) still open in new tabs unchanged. Styles/Atoms/Molecules/Organisms headers unaffected — their navigation is intentional.
+
+Build: ✅ 85 modules, 271.06 kB JS.
+
+---
+
 ## showcase-dropdown-hide-empty — 2026-06-26
 
 Hid the "ON COLOR, EMPTY" and "DEFAULT, EMPTY" variant demos from the `/ds-dev` dropdown atom showcase. Removed their `<StateLabel>` blocks (label + component instance) from the "variants" `VariantRow`. All other dropdown sections unchanged: ON COLOR FILLED, DEFAULT FILLED, STATES (default interactive, disabled), OPEN (live starts open, pinned open). Dropdown component itself untouched.
