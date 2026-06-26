@@ -50,7 +50,7 @@ export default function Attemt({ variant = 'Default' }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <SalaryCol price={data.left.price} benefits={data.left.benefits} />
         {!isV2 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, alignSelf: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, alignSelf: 'flex-start' }}>
             <span style={{
               display: 'inline-block', width: 5, height: 5,
               borderRadius: '50%', backgroundColor: 'var(--status-error)', flexShrink: 0,

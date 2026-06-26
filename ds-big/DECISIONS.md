@@ -1029,3 +1029,415 @@ Added `newTab: true` to the `page1` and `page2` entries in `NAV_CONFIG` (Sidebar
 ## vercel-spa-rewrite — 2026-06-24
 
 Added `vercel.json` with catch-all SPA rewrite (`/(.*) → /index.html`) so `/page1` and `/page2` (and all client-side routes) are served by `index.html` on direct load instead of returning a 404.
+
+---
+
+## page4-banner — 2026-06-24
+
+Added Page 4 (HiringCampaignAdd, node 357:59085). Reused CardTop organism — added 5 optional props (all backwards-compatible, defaults preserve page 2 behaviour): `showDropdowns` (bool, default true — hides TEAMS/access top row + dropdown-pills bottom row), `title` (string), `subtitle` (string), `imgSrc` (URL override for main bg photo), `screenOverlaySrc` (optional extra mix-blend-screen layer present in page 4 Figma but not page 2). Page 4 banner: title="New Campaign Start", subtitle="Active campaign", `showBtnsGroup={false}`, `showDropdowns={false}`, page-4-specific CDN images. Route /page4 added to pagesConfig.js + App.jsx; sidebar link added (newTab).
+
+---
+
+## page3-engineering-team — 2026-06-24
+
+Added Page 3 (EngineeringTeam, node 357:58993). Full-bleed hero pattern mirrors Page 1: `position:relative` wrapper with CardTop Variant2 inside + Topmenu/SecondRow overlaid `position:absolute top:0 zIndex:10`.
+
+**CardTop Variant2 — 4 new props (all backwards-compatible, defaults preserve OrganismsPage behaviour):**
+- `imgSrc` — now wired in Variant2 (was ignored; defaults to `IMG_V2`)
+- `imgPlusLighter` — optional `mix-blend-mode:plus-lighter` overlay image (mirrors Page 1's allteams hero)
+- `switchOptions` — array passed to SwitchGroup (default `['Team','Projects','Reports']`)
+- `fullBleed` — bool (default false); when true removes `maxWidth:830` and `borderRadius:12` from Variant2 outer container, making it edge-to-edge like Page 1's hero. OrganismsPage passes no props so unaffected.
+- Also wired `title` and `subtitle` props into Variant2 text (were hardcoded "Sarah Mitchell"/"Senior Software Engineer")
+- Exports added: `IMG_P3_BG`, `IMG_P3_OVERLAY` (refreshed 2026-06-24, expire 7 days)
+
+**Profile — 1 new prop:** `noBorderBottom` bool (default false) — removes bottom border on last list item.
+
+**Page 3 sections (from Figma node reads):**
+1. Full-bleed hero: CardTop Variant2 — title "Engineering Team", subtitle "Detailed team overview\nand performance metrics", switchOptions `['Team','Campaigns','Access']`, showBtnsGroup=false, plus-lighter overlay image
+2. Notify (green): "Kai finished the UI designs, Anya onboarded 3 new hires, and the team had a successful offsite event."
+3. Team card (white, padding 30px): "Team" antiqa-40 header + 10 Profile long-variant rows; last row noBorderBottom
+
+**10 profiles** (all from Figma node reads, barValue=default): Sarah Johnson (green), Michael Smith (purple), Emily Davis (green), David Brown (purple), Linda Garcia (green), James Wilson (red), Alice Thompson (green), Robert Martinez (red), Jessica Taylor (green), Charles Lee (red/last-no-border).
+
+Route /page3 added to pagesConfig.js (node 357:58993) + App.jsx PAGE_COMPONENTS; sidebar entry added between Page 2 and Page 4 (newTab).
+
+---
+
+## page4-fix — 2026-06-24
+
+**Corrective pass** against Figma node 357:59066 (Page 4 screenshot read).
+
+### What was missing / wrong
+
+| Item | Before | After |
+|------|--------|-------|
+| Header progress bar | always rendered | hidden via `showProgressBar={false}` prop on OrgHeader |
+| Banner title | "New Campaign Start" | "Senior Frontend Developer Campaign" (from Figma) |
+| Banner buttons | `showBtnsGroup={false}` — none shown | `showBtnsGroup` + `ctaBtns={['finish','cancel']}` — Finish (selected) + Cancel |
+| Banner images | stale URLs from prior session | fresh URLs from node 357:59066 read (`36a01fb5`, `49c1cc42`) |
+| Task section | missing entirely | 6 TaskRow instances (3 Default, 3 Variant2/done) in white card |
+| Applications/In-Progress/Conversion row | missing | 3 CardsMetrica cards (142 total, 28 active, 19.7% conversion) |
+| Funnel section | missing | full-width section: 5 large antiqa numbers (142/89/28/31/4) with labels |
+| Pipeline section | missing | Canban organism (full-width) |
+
+### Component changes (all backwards-compatible)
+
+- **OrgHeader**: `showProgressBar = true` prop — wraps Bar+stages in conditional. Default true keeps Pages 2, 3 unchanged.
+- **CardTop Default**: `ctaBtns` prop (null = use default `CTA_BTNS_ON_COLOR`). When provided, overrides button labels; first button is selected. Existing `selected={label === 'promote'}` replaced by `selected={i === 0}`.
+- **TaskRow**: `width = 692` prop — defaults keep OrganismsPage unchanged; Page4 passes `"100%"`.
+- **CardsMetrica**: `width = 202` prop — defaults keep MoleculesPage unchanged; Page4 passes `"100%"`.
+
+### Self-verify vs Figma node 357:59066 screenshot
+
+- [x] Header: Topmenu + SecondRow + Back row visible; no dotted stage bar
+- [x] Banner: gold blend hero, sunflower image, correct title, Finish+Cancel buttons
+- [x] Task section: white card, Task heading, 6 task rows
+- [x] Applications row: 3 side-by-side metric cards
+- [x] Funnel: 5 large numbers full-width below metrics
+- [x] Pipeline: full-width Canban with Applied/Screening/Interview/Offer columns
+
+Note: Funnel values (142, 89, 28, 31, 4) and labels read from screenshot — Figma design-context output was truncated at 100 KB (Bar atom expanded all 200 dots inline). Values appear correct; re-verify if labels need adjusting.
+
+---
+
+## page3-fix — 2026-06-24
+
+**Corrective pass** — three reported issues against Figma node 357:58993.
+
+### Root-cause analysis (via curl + Figma screenshot)
+
+| Issue | Root cause | Fix |
+|-------|-----------|-----|
+| Avatars broken | Reported: page3 using raw `<img src=...>` for avatars. **Actual**: current code already uses `Profile → Avatar` atom correctly (`person="katya"`). Avatar CDN URL `37977747` returns HTTP 200 — not expired, accessible. No code change needed; removed unused `OrgHeader` import from Page3.jsx. | Confirmed atom already used; dead import removed |
+| Hero bg missing | `IMG_P3_BG` Figma CDN URL (`5c804742`) returns HTTP 202 + CloudFront WAF challenge for browser `<img>` GET requests (blocked). curl GET works fine — image downloadable (2884×1264 PNG, 1.8 MB). Overlay (`cd8499b0`) returns 200 and is accessible, downloaded for consistency. | Downloaded both images to `public/images/`; updated CardTop.jsx exports to `/images/hero-p3-bg.png` and `/images/hero-p3-overlay.png` (served by Vite dev server and built output, no expiry) |
+| Subtitle duplicate | Reported: two subtitles rendered on top of each other. **Actual**: Figma screenshot of 357:58993 shows single subtitle "DETAILED TEAM OVERVIEW AND PERFORMANCE METRICS" — exactly matching current `subtitle="Detailed team overview\nand performance metrics"` prop. CardTop Variant2 has one `<p>` for subtitle. Duplication likely from a pre-session version of Page3 that rendered `<OrgHeader>` (which has its own text) alongside the hero. Current code is correct. | No change needed; verified |
+
+### Files changed
+
+- `src/ds-dev/organisms/CardTop.jsx` — `IMG_P3_BG` and `IMG_P3_OVERLAY` constants changed from Figma CDN URLs to `/images/hero-p3-bg.png` and `/images/hero-p3-overlay.png`
+- `src/pages/Page3.jsx` — removed unused `OrgHeader` import
+- `public/images/hero-p3-bg.png` — new file, 1.8 MB PNG (2884×1264), hero background
+- `public/images/hero-p3-overlay.png` — new file, 286 KB PNG (512×288), plus-lighter blend overlay
+
+---
+
+## header-img-optimization — 2026-06-24
+
+### Problem
+All 4 pages used remote Figma CDN URLs (`https://www.figma.com/api/mcp/asset/...`) for header/hero background images. CDN URLs expire after 7 days. Several were already dead: `IMG_BG2` (P1 overlay), `IMG_DEFAULT` (P2 CardTop bg), `IMG_P4_BG`, `IMG_P4_SCREEN` returned 0B, 159B placeholders, or CloudFront WAF challenges on browser `<img>` requests. All remote URLs are `Case A` — no Vite bundling, no content hash, browser re-fetches every render, breaks entirely when URL expires.
+
+### Step 0 — Junk cleaned
+Previous session had downloaded these stale/junk files:
+- `/tmp/p1-overlay-raw.png` — 0B (dead CDN) — deleted
+- `/tmp/p2-bg-raw.png` — 0B (dead CDN) — deleted
+- `/tmp/p4-bg-raw.png` — 159B (32×32 WAF placeholder) — deleted
+- `/tmp/p4-bg-retry.png` — 159B (same junk) — deleted
+- `/tmp/p4-screen-raw.png` — 0B (dead CDN) — deleted
+- `/tmp/v2-fallback-raw.png` — 9.7 MB (valid, but duplicate of p1-bg) — deleted
+
+`src/ds-dev/assets/headers/` was empty; `public/images/` had P3 files from prior session.
+
+### Step 1 — Source resolution
+
+Re-exported from Figma via `download_assets` on each page node (read one at a time). Images identified by downloading all fills in each page's subtree, then matching by dimension/size/content-diff against known assets.
+
+| Asset | Source | Original size | How identified |
+|---|---|---|---|
+| P1 bg (`IMG_BG1`) | `/tmp/p1-bg-raw.png` — kept from prior session (only valid file) | 9.7 MB PNG, 4096×2304 | Confirmed valid — matches prior session |
+| P1 overlay (`IMG_BG2`) | `download_assets` node 357:58932, img01.png | 1.8 MB PNG, 2884×1264 | Confirmed identical to P3-bg; shared Figma asset, different usage (plus-lighter blend on P1 vs main bg on P3) |
+| P2 bg (`IMG_DEFAULT`) | `download_assets` node 357:59014, img02.png | 1.4 MB PNG, 1536×864 | Largest distinct non-avatar non-texture image in P2 subtree |
+| P3 bg (`IMG_P3_BG`) | `public/images/hero-p3-bg.png` — already local | 1.8 MB PNG, 2884×1264 | Existing valid file from prior session |
+| P3 overlay (`IMG_P3_OVERLAY`) | `public/images/hero-p3-overlay.png` — already local | 286 KB PNG, 512×288 | Existing valid file |
+| P4 bg (`IMG_P4_BG`) | `download_assets` node 357:59066, img00.png | 2.0 MB PNG, 1536×864 | Largest distinct non-avatar non-texture image in P4 subtree |
+| P4 screen (`IMG_P4_SCREEN`) | `download_assets` node 357:59066, img01.png | 140 KB PNG, 384×216 | Small 16:9 image consistent with UI screen mockup overlay |
+
+Note: The shared texture (2884×1264) appears in all pages' Figma subtrees as a background fill. In Figma: same asset UUID, used as plus-lighter overlay on P1, main bg on P3, and appears in OrgHeader subtree on P2/P4.
+
+### Step 2 — Optimization
+
+All 7 source images converted to WebP q=80 with dimension reduction to actual render context:
+
+| Final file | Source dims | Target dims | Rationale | Before | After |
+|---|---|---|---|---|---|
+| `header-p1-bg.webp` | 4096×2304 | 1920×1080 | Full-bleed hero, 2× 1440 display = 2880px max; 1920 sufficient | 9.7 MB PNG | 34 KB WebP |
+| `header-p1-overlay.webp` | 2884×1264 | 1920×842 | Same full-bleed, plus-lighter texture | 1.8 MB PNG | 260 KB WebP |
+| `header-p2-bg.webp` | 1536×864 | 1660×934 | CardTop maxWidth 830 × 2× retina | 1.4 MB PNG | 22 KB WebP |
+| `header-p3-bg.webp` | 2884×1264 | 1920×842 | Full-bleed hero (same dims as P1-overlay — IDENTICAL file) | 1.8 MB PNG | 260 KB WebP |
+| `header-p3-overlay.webp` | 512×288 | 512×288 (kept) | Texture already small | 286 KB PNG | 22 KB WebP |
+| `header-p4-bg.webp` | 1536×864 | 1660×934 | CardTop maxWidth 830 × 2× retina | 2.0 MB PNG | 53 KB WebP |
+| `header-p4-screen.webp` | 384×216 | 384×216 (kept) | Screen mockup overlay, already small | 140 KB PNG | 8 KB WebP |
+
+Tool: `cwebp -resize W 0 -q 80` (libwebp 1.6.0).
+
+**Note on deduplication**: `header-p1-overlay.webp` and `header-p3-bg.webp` are byte-for-byte identical (same Figma source asset). Vite correctly deduplicates them: both imports resolve to the same content-hashed file `header-p3-bg-B6rEZrtu.webp` in dist. Only 6 distinct files are emitted, not 7.
+
+`public/images/hero-p3-bg.png` and `public/images/hero-p3-overlay.png` are now unused (code switched to static imports from `src/ds-dev/assets/headers/`). Left in place — not deleted without explicit authorization.
+
+### Step 3 — Code changes
+
+**`src/ds-dev/organisms/CardTop.jsx`**:
+- Removed all Figma CDN URL constants and all exports (`IMG_P3_BG`, `IMG_P3_OVERLAY`, `IMG_P4_BG`, `IMG_P4_SCREEN`)
+- Added static ES imports: `headerP1Bg` and `headerP2Bg` for the two internal fallbacks
+- `IMG_DEFAULT = headerP2Bg` (CardTop Default fallback — also used by DS showcase)
+- `IMG_V2 = headerP1Bg` (CardTop Variant2 fallback — also used by DS showcase)
+- Added `loading="eager" fetchPriority="high" decoding="async"` to primary bg `<img>` in both Default and Variant2 branches
+- Added `decoding="async"` to secondary overlay `<img>` elements
+
+**`src/pages/Page1.jsx`**:
+- Removed `const IMG_BG1/IMG_BG2 = 'https://...'`
+- Added `import IMG_BG1 from '../ds-dev/assets/headers/header-p1-bg.webp'`
+- Added `import IMG_BG2 from '../ds-dev/assets/headers/header-p1-overlay.webp'`
+- Added `loading="eager" fetchPriority="high" decoding="async"` to `IMG_BG1` img; `decoding="async"` to `IMG_BG2` img
+
+**`src/pages/Page2.jsx`**:
+- Added `import headerP2Bg from '../ds-dev/assets/headers/header-p2-bg.webp'`
+- Changed `<CardTop />` to `<CardTop imgSrc={headerP2Bg} />` (prop already existed)
+
+**`src/pages/Page3.jsx`**:
+- Changed `import CardTop, { IMG_P3_BG, IMG_P3_OVERLAY } from '...CardTop.jsx'` to plain `import CardTop from '...CardTop.jsx'`
+- Added `import IMG_P3_BG from '../ds-dev/assets/headers/header-p3-bg.webp'`
+- Added `import IMG_P3_OVERLAY from '../ds-dev/assets/headers/header-p3-overlay.webp'`
+- JSX unchanged (props unchanged, only import source changed)
+
+**`src/pages/Page4.jsx`**:
+- Changed `import CardTop, { IMG_P4_BG, IMG_P4_SCREEN } from '...CardTop.jsx'` to plain `import CardTop from '...CardTop.jsx'`
+- Added `import IMG_P4_BG from '../ds-dev/assets/headers/header-p4-bg.webp'`
+- Added `import IMG_P4_SCREEN from '../ds-dev/assets/headers/header-p4-screen.webp'`
+- JSX unchanged
+
+### Step 4 — Verification
+
+`npm run build` — ✓ built in 811ms, no errors.
+
+**Content-hashed dist output** (all immutable, browser-cacheable):
+```
+dist/assets/header-p1-bg-B_33kj8p.webp        34 KB   ← Page 1 hero bg
+dist/assets/header-p2-bg-B_fK1XxO.webp        22 KB   ← Page 2 & DS showcase CardTop Default
+dist/assets/header-p3-bg-B6rEZrtu.webp       266 KB   ← Page 3 bg AND Page 1 overlay (shared asset, deduped)
+dist/assets/header-p3-overlay-oqIOodeu.webp   22 KB   ← Page 3 overlay
+dist/assets/header-p4-bg-B1byWzg2.webp        53 KB   ← Page 4 bg
+dist/assets/header-p4-screen-DY4tanEm.webp     8 KB   ← Page 4 screen overlay
+```
+
+Zero remaining `https://` image URLs in CardTop.jsx or any page file. Each page still uses its own distinct image. CardTop DS showcase fallbacks updated to local files — no broken images anywhere.
+
+---
+
+## page5-automation-builder — 2026-06-24
+
+### Figma inventory (node 357:59152)
+
+Three-column flex row inside a 100vh page with fixed 350px panels and a fluid center canvas.
+
+| Zone | Figma node | Width | Content |
+|------|------------|-------|---------|
+| Left panel | 357:59156 | 350px | Automation heading, name input, 7 node library items, 3 template pills |
+| Canvas | 357:59175 | flex-1 | Draggable NodeCard instances + SVG bezier edges |
+| Right panel | 357:59182 | 350px | Node Properties heading, node name input, tab control, 4 text fields, Save btn |
+
+**Canvas nodes (from Figma — node ids 357:59176–59178):**
+
+| Node | x | y | bg token |
+|------|---|---|----------|
+| Applicant Screening | 133 | 156 | `var(--surface-card-red)` |
+| Interview Stage | 161 | 483 | `var(--surface-card-violet)` |
+| Final Decision | 473 | 268 | `var(--surface-card-pink)` |
+
+**Edges:** Applicant Screening → Final Decision; Interview Stage → Final Decision.
+
+**Node library bg tokens:**
+
+| Items | Token |
+|-------|-------|
+| Start Trigger, Application Review, Interview | `var(--surface-card-on-card-red)` |
+| Email Notification, Conditional Logic | `var(--surface-card-yellow)` |
+| Training Module | `var(--surface-card-on-card-pink)` |
+| Progress Tracker | `var(--surface-card-on-card-violet)` |
+
+### Component mapping
+
+| Figma element | DS component | Decision |
+|---|---|---|
+| Top bar | `Topmenu property1="all"` | AS-IS |
+| Sub-header row | `SecondRow type="builder"` | AS-IS |
+| Canvas node cards | `NodeCard` molecule | Added optional `bg` prop (default `var(--surface-card-red)` unchanged) |
+| Node library items | `Btn type="node"` | Added optional `bg` prop (default `var(--surface-card-on-card-red)` unchanged) |
+| Template pills | `Btn type="secondary"` | AS-IS |
+| Tab control | `Switch size="small"` (×2) | NOT SwitchGroup — accent-default background is wrong here; two standalone Switch atoms in a flex row |
+| Save button | `Btn type="small"` | AS-IS |
+| Text inputs / textareas | Native `<input>` / `<textarea>` | DS Input/TextArea atoms have their own wrapper layout; Page5 form fields built inline from tokens (`--control-secondary` bg, `--font-family-pixel`, `--radius-4`) |
+
+### Structural values (not DS tokens)
+
+| Value | Used for |
+|---|---|
+| `left: 0; top: 0; transform: translate(x,y)` | Canvas node absolute positioning — inherently positional |
+| `HDX_IN=19, HDX_OUT=261, HDY=106` | SVG edge source/target point offsets — derived from NodeCard layout geometry |
+| `c = max(40, |tx-sx| × 0.5)` | Cubic bezier tangent length — canvas coordinate math |
+
+### Typo (Figma source, reproduced verbatim)
+
+- Tab label: **"PARAMETRS"** (should be "PARAMETERS"). Reproduced as-is. Do not auto-correct.
+
+### Flags
+
+- `FLAG` — Sidebar not updated: `/page5` route added to `pagesConfig.js` + `App.jsx`. `Sidebar.jsx` NAV_CONFIG not updated (constraint: do NOT touch /ds-dev showcase). Navigate to `/page5` directly to view.
+- `FLAG` — Canvas node drag targets use plain div wrapper (no `ds-interactive` class). `ds-interactive` is designed for `<button>` elements; applying to draggable divs conflicts with pointer-capture event handling. Custom `cursor: grab/grabbing` + selection outline (`--accent-default` gold) used instead.
+- `FLAG` — HDY (handle y offset ≈ 106px) is estimated from NodeCard layout. Actual rendered value depends on font line-heights at runtime. SVG edges connect "near" the handle dots; pixel-perfect alignment not guaranteed without runtime measurement.
+
+---
+
+## sidebar-page5 — 2026-06-24
+
+**File:** `src/components/Sidebar.jsx`, line 82.
+
+**Pattern (Pages 1–4):** `NAV_CONFIG` array, `id: 'pages'` entry, `subsections` array. Each page: `{ id: 'pageN', label: 'Page N', path: '/pageN', newTab: true }`. Rendered via `sub.path && sub.newTab` branch → `<a href={sub.path} target="_blank" rel="noopener noreferrer">`.
+
+**Change:** Added `{ id: 'page5', label: 'Page 5', path: '/page5', newTab: true }` as the fifth entry in `subsections`, immediately after Page 4. One line added; nothing else touched.
+
+**Build:** ✅ 86 modules, 269.83 kB JS, 15.15 kB CSS — zero errors.
+
+---
+
+## batch-9-fixes — 2026-06-25
+
+Nine corrective fixes across atoms, molecules, organisms, Page 4, and Page 5.
+
+### FIX 1 — DS showcase: dropdown ON COLOR FILLED opens on click
+**File:** `src/pages/AtomsPage.jsx` line 156.
+**Root cause:** `<Dropdown variant="On color" value="frontend-team" />` had no `options` prop → panel never renders.
+**Change:** Added `options={['Option A', 'Option B', 'Option C']}`.
+
+### FIX 2 — DS molecule: Attemt status block top-aligned
+**File:** `src/ds-dev/molecules/Attemt.jsx` line 53.
+**Root cause:** `alignSelf: 'center'` overrode the outer row's `alignItems: 'flex-start'`.
+**Change:** `alignSelf: 'center'` → `alignSelf: 'flex-start'`.
+
+### FIX 3 — Page 3: hero subtitle lines not overlapping
+**File:** `src/ds-dev/organisms/CardTop.jsx`, Variant2 subtitle.
+**Root cause:** `.text-text-pixel` has `line-height: 9px` (absolute). At `font-size: 30px` this causes lines to collapse.
+**Change:** Added `lineHeight: 1.2` to subtitle inline style.
+
+### FIX 4 — Page 4: banner image saturation restored
+**File:** `src/ds-dev/organisms/CardTop.jsx` + `src/pages/Page4.jsx`.
+**Root cause:** `black + mixBlendMode:color` layer fully desaturates the image for all CardTop Default usages.
+**Change:** Added `noDesaturate = false` prop to CardTop; skip the black+color blend div when `noDesaturate` is true. Page4 passes `noDesaturate`.
+
+### FIX 5 — Page 4: task section corrections
+**Files:** `src/ds-dev/atoms/Flag.jsx`, `src/ds-dev/organisms/TaskRow.jsx`, `src/pages/Page4.jsx`.
+- **5a:** First two tasks: `showError: false` (error banners removed).
+- **5b (flag colors):** Added `colorScheme = 'default'` prop to Flag. `'inverted'` → active=filled-gray, inactive=outline-black. TaskRow gains `flagScheme = 'default'` prop; Page4 passes `flagScheme="inverted"` to all rows.
+- **5c:** TaskRow gains `btnLabel = 'job description'` prop. 'Review applications' row: `btnLabel: 'review'`.
+- **5d:** 'Conduct initial interviews': `showBtn: false`.
+- **5e:** TaskRow gains `noBorderBottom = false` prop. 'Onboarding paperwork': `btnLabel: 'generate'`, `noBorderBottom: true`.
+
+### FIX 6 — Page 4: funnel section
+**File:** `src/pages/Page4.jsx`.
+- **6a:** Wrapped funnel items in card (`backgroundColor: var(--surface-card-default)`, `borderRadius: var(--radius-12)`, `padding: var(--space-30)`).
+- **6b:** "Funnel" heading changed from `font-size-84` centered to `font-size-40` left-aligned, `letterSpacing: -0.4px` (matches CardsMetrica title style).
+
+### FIX 7 — Page 5: Node Properties panel
+**Files:** `src/pages/Page5.jsx`, `src/ds-dev/atoms/Switch.jsx`.
+- **7a:** Wrapped `<Btn type="small" label="save" />` in `<div style={{ alignSelf: 'flex-start' }}>` to prevent button stretching in flex column.
+- **7b:** Added `alignSelf: 'flex-start'` to `PANEL_STYLE` — panels now hug content height rather than stretching to row height. Matches Figma node 357:59181 `items-start`.
+- **7c:** Added `letterSpacing: '1.6px'` to Switch inline style when `!isBig`. Figma (node 357:59152) shows Switch text with `tracking-[1.6px]`; `text-caps` class has no tracking.
+
+### FIX 8 — Page 5: canvas edge z-order and handle dot colors
+**Files:** `src/pages/Page5.jsx`, `src/ds-dev/molecules/NodeCard.jsx`.
+- **8a:** Added `zIndex: 30` to SVG style — edges now render above nodes (z-index 10/20).
+- **8b/c:** Added `inConnected = false` and `outConnected = true` props to NodeCard. Left dot: black if inConnected, gray otherwise. Right dot: black if outConnected, gray otherwise. Added `OUT_NODES` and `IN_NODES` Sets computed from `EDGES` at module level. DraggableNode accepts and passes these props. Result: Final Decision has black left dot + gray right dot; outgoing nodes have gray left + black right.
+
+### FIX 9 — Page 5: sub-nav bar background
+**Files:** `src/ds-dev/organisms/SecondRow.jsx`, `src/pages/Page5.jsx`.
+Added optional `bg` prop to SecondRow builder branch. Page5 passes `bg="transparent"` for explicit transparent background.
+
+**Build:** ✅ 86 modules, 270.78 kB JS, 15.19 kB CSS — zero errors.
+
+---
+
+## batch-4-fixes — 2026-06-26
+
+Four corrective fixes: Page 4 banner image, Page 4 funnel, Page 3 hero spacing, and sidebar rename/reorder/routes.
+
+### FIX A — Page 4: banner replaced with flat Figma export
+
+**Problem:** The CSS blend stack (`base img + black/color blend + #ffb700/hard-light div + screen-mode img + noDesaturate override`) cannot reproduce Figma's lemon-yellow grainy composite. The `noDesaturate` workaround from batch-9 (FIX 4) only partially corrected the issue.
+
+**Fix:**
+- `download_assets` on Figma node 357:59069 (card top, 830×480), format=jpg, scale=2 → `header-p4-flat.jpg` (1660×960, 2 MB) saved to `src/ds-dev/assets/headers/`.
+- Added `flatSrc` optional prop (default `undefined`) to `CardTop.jsx`. When provided on the Default variant, renders ONLY `<img>` with `object-fit:cover` — no blend stack, no text overlay, no buttons. All visual content baked into the flat image.
+- `Page4.jsx`: replaced `import IMG_P4_BG` + `import IMG_P4_SCREEN` with `import IMG_P4_FLAT`; replaced all CardTop props with just `flatSrc={IMG_P4_FLAT}`.
+- Deleted `header-p4-bg.webp` and `header-p4-screen.webp` (explicitly authorized, no longer referenced anywhere).
+
+**Prop contract:** `flatSrc` only affects Default variant. Default behavior (blend stack) unchanged — no regression on Page 2 or DS showcase.
+
+### FIX B — Page 4: funnel section corrections
+
+Three sub-fixes on `Page4.jsx`:
+
+**B(a) — gap between metrics row and funnel card:** Funnel outer div had `paddingTop: 'var(--font-size-84)'` (84px). Gap to metrics row was `var(--space-4)` (4px, from the centered column's `paddingBottom`) + 84px = 88px. Changed `paddingTop: 'var(--font-size-84)'` → `paddingTop: 0`. Gap is now `var(--space-4)` — same as the three metric cards' gap.
+
+**B(b) — funnel label rename:** `FUNNEL` array:
+- Screened → Rejected
+- Shortlisted → Final Round
+- Hired → Offers Sent
+(Labels applied via `.uppercase` CSS class; exact case in data is visual-only.)
+
+**B(c) — funnel label color:** `color: 'var(--text-secondary)'` → `color: 'var(--text-primary)'` on funnel `<p>` label elements.
+
+### FIX C — Page 3: hero text block below nav overlay
+
+**Root cause:** FIX 3 from batch-9 added `lineHeight: 1.2` to the CardTop Variant2 subtitle (correct — matches Figma `leading-[normal]` at 30px). This increased the text block height by ~54px (from ~18px 2-line height at 9px line-height to ~72px at 1.2 × 30px). With `justifyContent: 'flex-end'` and `gap: 160` in the 480px Variant2 container, `textBlockTop = 480 - 30 (paddingBottom) - (textBlockH + gap + switchH) = 232 - gap`. Before fix: gap=160 → top=72px (behind 88px nav overlay). After fix: gap=106 → top=126px (38px below nav overlay).
+
+**Why gap ≠ 160:** Figma's `gap: 160` was designed with the CardTop frame at y=178 in the page (below a separate header section). In the React implementation the CardTop is the full-bleed hero starting at y=0 with the nav overlaid on top. The layout is structurally different — the gap must be reduced to compensate.
+
+**Fix:**
+- Added `gapToTabs = 160` optional prop to CardTop Variant2 outer container (default 160 preserves Figma spec and all existing usages including DS showcase).
+- `Page3.jsx`: passes `gapToTabs={106}` → title top = 126px, 38px below 88px nav overlay.
+
+### FIX D — Sidebar: rename, reorder, update routes
+
+**Files changed:** `src/pagesConfig.js`, `src/App.jsx`, `src/components/Sidebar.jsx`.
+
+**New routes and labels:**
+
+| ID | Old route | New route | Label |
+|----|-----------|-----------|-------|
+| 1  | /page1    | /all_teams              | All teams              |
+| 2  | /page2    | /candidate              | Candidate              |
+| 3  | /page3    | /team                   | Team                   |
+| 4  | /page4    | /hiring_campaign        | Hiring campaign        |
+| 5  | /page5    | /automation_mail_editor | Automation mail editor |
+
+**Sidebar order** (new): All teams → Team → Candidate → Hiring campaign → Automation mail editor (reordered P1, P3, P2, P4, P5).
+
+**`pagesConfig.js`:** Updated all 5 route/label values.
+
+**`App.jsx`:** Route definitions auto-update via `PAGES_CONFIG.map()`. Updated hardcoded `/preview-page/*` redirect from `/page1` → `/all_teams`.
+
+**`Sidebar.jsx` NAV_CONFIG:** Updated pages L1 `path: '/page1'` → `/all_teams`; replaced all 5 subsection entries with new ids/labels/paths in new order.
+
+**No redirects from old /pageN paths** — vercel.json catch-all serves the SPA on any path; old /pageN paths simply 404 (or navigate to fallback) if bookmarked.
+
+### Build result — batch-4-fixes
+
+- **Modules:** 85 (−1 — `header-p4-bg.webp` and `header-p4-screen.webp` deleted, `header-p4-flat.jpg` added)
+- **JS:** 271.03 kB (gzip 75.39 kB)
+- **CSS:** 15.19 kB — unchanged
+- `✓ built in 677ms` — zero errors, zero warnings
+
+---
+
+## showcase-dropdown-hide-empty — 2026-06-26
+
+**File:** `src/pages/AtomsPage.jsx`, dropdown section (lines 155–160).
+
+**Change:** Removed two `<StateLabel>` entries from the `<VariantRow label="variants">` block in the dropdown `<AtomSection>`:
+- `<SLabel>On color, empty</SLabel>` + `<Dropdown variant="On color" value="" />`
+- `<SLabel>default, empty</SLabel>` + `<Dropdown variant="default" value="" />`
+
+**Kept unchanged:** On color filled, default filled (variants row); states (default interactive, disabled); open (live starts open, pinned open).
+
+**Scope:** AtomsPage.jsx only. Dropdown component (`src/ds-dev/atoms/Dropdown.jsx`) not touched.
+
+**Build:** ✅ 85 modules, 270.81 kB JS — zero errors.

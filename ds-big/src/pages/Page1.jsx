@@ -3,10 +3,8 @@ import SecondRow  from '../ds-dev/organisms/SecondRow.jsx'
 import CardMetric from '../ds-dev/molecules/CardMetric.jsx'
 import Team       from '../ds-dev/molecules/Team.jsx'
 import SwitchGroup from '../ds-dev/atoms/SwitchGroup.jsx'
-
-/* Figma CDN — refreshed 2026-06-23; expire 7 days. See DECISIONS.md R5. */
-const IMG_BG1 = 'https://www.figma.com/api/mcp/asset/984e7eaf-09ea-44e1-b679-c8bb0b9d0e01'
-const IMG_BG2 = 'https://www.figma.com/api/mcp/asset/a8247f65-d136-4bdb-b49e-6031f3f6a12a'
+import IMG_BG1    from '../ds-dev/assets/headers/header-p1-bg.webp'
+import IMG_BG2    from '../ds-dev/assets/headers/header-p1-overlay.webp'
 
 const METRIC_CARDS = [
   { title: 'Health',       bars: [100, 58], label: 'Overall: Good',    bg: 'var(--surface-card-red)'    },
@@ -46,8 +44,10 @@ function AllTeamsHero() {
       <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundColor: 'var(--surface-page)' }} />
         <img alt="" src={IMG_BG1}
+          loading="eager" fetchPriority="high" decoding="async"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
         <img alt="" src={IMG_BG2}
+          decoding="async"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'plus-lighter' }} />
         <div style={{
           position: 'absolute', inset: 0,

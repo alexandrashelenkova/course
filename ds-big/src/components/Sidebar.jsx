@@ -72,11 +72,14 @@ export const NAV_CONFIG = [
   {
     id: 'pages',
     label: 'Pages',
-    path: '/page1',
+    path: '/all_teams',
     alwaysExpanded: true,
     subsections: [
-      { id: 'page1', label: 'Page 1', path: '/page1', newTab: true },
-      { id: 'page2', label: 'Page 2', path: '/page2', newTab: true },
+      { id: 'all_teams',              label: 'All teams',              path: '/all_teams',              newTab: true },
+      { id: 'team',                   label: 'Team',                   path: '/team',                   newTab: true },
+      { id: 'candidate',              label: 'Candidate',              path: '/candidate',              newTab: true },
+      { id: 'hiring_campaign',        label: 'Hiring campaign',        path: '/hiring_campaign',        newTab: true },
+      { id: 'automation_mail_editor', label: 'Automation mail editor', path: '/automation_mail_editor', newTab: true },
     ],
   },
 ]

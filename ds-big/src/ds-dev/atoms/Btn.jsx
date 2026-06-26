@@ -9,6 +9,7 @@ export default function Btn({
   selected = false,
   disabled = false,
   onClick,
+  bg,
 }) {
   const ariaDisabled = disabled ? 'true' : undefined
 
@@ -60,7 +61,7 @@ export default function Btn({
           gap: 'var(--space-8)',
           padding: 'var(--space-14)',
           borderRadius: 'var(--radius-4)',
-          backgroundColor: 'var(--surface-card-on-card-red)',
+          backgroundColor: bg ?? 'var(--surface-card-on-card-red)',
           color: 'var(--text-primary)',
           border: 'none',
           cursor: disabled ? 'not-allowed' : 'pointer',

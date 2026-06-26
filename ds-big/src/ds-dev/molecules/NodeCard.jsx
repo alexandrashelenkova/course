@@ -1,8 +1,11 @@
 import Icons from '../atoms/Icons.jsx'
 
 export default function NodeCard({
-  label    = 'Start Trigger',
-  subtitle = 'New Application received',
+  label        = 'Start Trigger',
+  subtitle     = 'New Application received',
+  bg,
+  inConnected  = false,
+  outConnected = true,
 }) {
   return (
     <div style={{
@@ -11,7 +14,7 @@ export default function NodeCard({
       gap: 'var(--space-24)',
       padding: 'var(--space-14)',
       width: 280,
-      backgroundColor: 'var(--surface-card-red)',
+      backgroundColor: bg ?? 'var(--surface-card-red)',
       borderRadius: 'var(--radius-8)',
     }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-14)' }}>
@@ -37,13 +40,13 @@ export default function NodeCard({
           display: 'inline-block',
           width: 10, height: 10,
           borderRadius: '50%',
-          backgroundColor: 'var(--text-secondary)',
+          backgroundColor: inConnected ? 'var(--color-black)' : 'var(--text-secondary)',
         }} />
         <span style={{
           display: 'inline-block',
           width: 10, height: 10,
           borderRadius: '50%',
-          backgroundColor: 'var(--color-black)',
+          backgroundColor: outConnected ? 'var(--color-black)' : 'var(--text-secondary)',
         }} />
       </div>
     </div>

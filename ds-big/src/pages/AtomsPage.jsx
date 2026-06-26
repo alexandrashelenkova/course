@@ -153,10 +153,8 @@ export default function AtomsPage() {
       {/* ── dropdown ───────────────────────────────────────────────────── */}
       <AtomSection id="dropdown" title="dropdown">
         <VariantRow label="variants">
-          <StateLabel><SLabel>On color, filled</SLabel>     <Dropdown variant="On color" value="frontend-team" /></StateLabel>
-          <StateLabel><SLabel>On color, empty</SLabel>      <Dropdown variant="On color" value="" /></StateLabel>
+          <StateLabel><SLabel>On color, filled</SLabel>     <Dropdown variant="On color" value="frontend-team" options={['Option A', 'Option B', 'Option C']} /></StateLabel>
           <StateLabel><SLabel>default, filled</SLabel>      <Dropdown variant="default"  value="frontend-team" /></StateLabel>
-          <StateLabel><SLabel>default, empty</SLabel>       <Dropdown variant="default"  value="" /></StateLabel>
         </VariantRow>
         <VariantRow label="states">
           <StateLabel><SLabel>default (interactive)</SLabel> <Dropdown variant="default" value="frontend-team" options={['Option A', 'Option B', 'Option C']} /></StateLabel>

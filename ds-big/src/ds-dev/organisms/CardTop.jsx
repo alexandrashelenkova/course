@@ -2,10 +2,11 @@ import Btn       from '../atoms/Btn.jsx'
 import SwitchGroup from '../atoms/SwitchGroup.jsx'
 import Icons       from '../atoms/Icons.jsx'
 import Dropdown    from '../atoms/Dropdown.jsx'
+import headerP1Bg  from '../assets/headers/header-p1-bg.webp'
+import headerP2Bg  from '../assets/headers/header-p2-bg.webp'
 
-/* Figma CDN — refreshed 2026-06-24; expire 7 days. See DECISIONS.md R6. */
-const IMG_DEFAULT = 'https://www.figma.com/api/mcp/asset/62f67f9b-82ea-423f-bdc1-a0e716c9e8d5'
-const IMG_V2      = 'https://www.figma.com/api/mcp/asset/c84f99ea-83e3-4f12-855e-31320c0a6207'
+const IMG_DEFAULT = headerP2Bg
+const IMG_V2      = headerP1Bg
 
 const TEAM_OPTIONS  = ['Frontend-team', 'Backend-team', 'Design-team',   'Product-team']
 const LAB_OPTIONS   = ['Innovation Lab',  'Core Platform', 'Growth',       'Infrastructure']
@@ -38,21 +39,45 @@ function GoldAdd() {
 
 const CTA_BTNS_ON_COLOR = ['promote', 'negotiate', 'suspend', 'fire']
 
-export default function CardTop({ property1 = 'Default', showBtnsGroup = true }) {
+export default function CardTop({
+  property1      = 'Default',
+  showBtnsGroup  = true,
+  showDropdowns  = true,
+  title          = 'Sarah Mitchell',
+  subtitle       = 'Senior Software Engineer',
+  imgSrc,
+  imgPlusLighter,
+  screenOverlaySrc,
+  switchOptions  = ['Team', 'Projects', 'Reports'],
+  fullBleed      = false,
+  ctaBtns,
+  noDesaturate   = false,
+  flatSrc,
+  gapToTabs      = 160,
+}) {
   if (property1 === 'Variant2') {
     return (
       <div style={{
         position: 'relative', display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'flex-end',
-        gap: 160, width: '100%', maxWidth: 830, height: 480,
-        borderRadius: 'var(--radius-12)', overflow: 'hidden',
+        gap: gapToTabs, width: '100%', height: 480,
+        ...(!fullBleed && { maxWidth: 830, borderRadius: 'var(--radius-12)' }),
+        overflow: 'hidden',
         padding: 'var(--space-30)', boxSizing: 'border-box',
       }}>
         <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
           <img
-            alt="" src={IMG_V2}
+            alt="" src={imgSrc ?? IMG_V2}
+            loading="eager" fetchPriority="high" decoding="async"
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
           />
+          {imgPlusLighter && (
+            <img
+              alt="" src={imgPlusLighter}
+              decoding="async"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'plus-lighter' }}
+            />
+          )}
           <div style={{
             position: 'absolute', inset: 0,
             background: 'linear-gradient(to bottom, transparent 0%, var(--surface-page) 100%)',
@@ -68,10 +93,10 @@ export default function CardTop({ property1 = 'Default', showBtnsGroup = true })
             <p style={{
               fontFamily: 'var(--font-family-antiqa)', fontSize: 'var(--font-size-84)',
               letterSpacing: '-0.84px', lineHeight: 0.9, color: 'var(--text-primary)',
-            }}>Sarah Mitchell</p>
+            }}>{title}</p>
             <p className="text-text-pixel tracking-[-0.9px] uppercase"
-              style={{ fontSize: 'var(--font-size-30)', color: 'var(--text-primary)' }}>
-              Senior Software Engineer
+              style={{ fontSize: 'var(--font-size-30)', color: 'var(--text-primary)', whiteSpace: 'pre-line', lineHeight: 1.2 }}>
+              {subtitle}
             </p>
           </div>
           {showBtnsGroup && (
@@ -83,7 +108,26 @@ export default function CardTop({ property1 = 'Default', showBtnsGroup = true })
           )}
         </div>
 
-        <SwitchGroup options={['Team', 'Projects', 'Reports']} />
+        <SwitchGroup options={switchOptions} />
+      </div>
+    )
+  }
+
+  /* Flat-image shortcut — pre-rendered composite; skips blend stack and content overlay */
+  if (flatSrc) {
+    return (
+      <div style={{
+        width: '100%', maxWidth: 830, height: 480,
+        borderRadius: 'var(--radius-12)', overflow: 'hidden',
+      }}>
+        <img
+          alt=""
+          src={flatSrc}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+        />
       </div>
     )
   }
@@ -102,24 +146,36 @@ export default function CardTop({ property1 = 'Default', showBtnsGroup = true })
         overflow: 'hidden', pointerEvents: 'none',
       }}>
         <img
-          alt="" src={IMG_DEFAULT}
+          alt="" src={imgSrc ?? IMG_DEFAULT}
+          loading="eager" fetchPriority="high" decoding="async"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
         />
-        <div style={{ position: 'absolute', inset: 0, backgroundColor: 'black', mixBlendMode: 'color' }} />
+        {!noDesaturate && (
+          <div style={{ position: 'absolute', inset: 0, backgroundColor: 'black', mixBlendMode: 'color' }} />
+        )}
         {/* #ffb700 is the hard-light blend value from Figma — not a token, structural visual technique */}
         <div style={{ position: 'absolute', inset: 0, backgroundColor: '#ffb700', mixBlendMode: 'hard-light' }} />
+        {screenOverlaySrc && (
+          <img
+            alt="" src={screenOverlaySrc}
+            decoding="async"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'screen' }}
+          />
+        )}
       </div>
 
-      {/* Top row: TEAMS / access */}
-      <div style={{
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-        width: '100%', position: 'relative',
-      }}>
-        <p className="text-text-pixel tracking-[2px] uppercase whitespace-nowrap"
-          style={{ color: 'var(--accent-gold)' }}>TEAMS</p>
-        <p className="text-text-pixel tracking-[2px] uppercase whitespace-nowrap"
-          style={{ color: 'var(--accent-gold)' }}>access</p>
-      </div>
+      {/* Top row: TEAMS / access — hidden when showDropdowns={false} */}
+      {showDropdowns && (
+        <div style={{
+          display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+          width: '100%', position: 'relative',
+        }}>
+          <p className="text-text-pixel tracking-[2px] uppercase whitespace-nowrap"
+            style={{ color: 'var(--accent-gold)' }}>TEAMS</p>
+          <p className="text-text-pixel tracking-[2px] uppercase whitespace-nowrap"
+            style={{ color: 'var(--accent-gold)' }}>access</p>
+        </div>
+      )}
 
       {/* Center: name + role + CTA btns */}
       <div style={{
@@ -133,40 +189,42 @@ export default function CardTop({ property1 = 'Default', showBtnsGroup = true })
           <p style={{
             fontFamily: 'var(--font-family-antiqa)', fontSize: 'var(--font-size-84)',
             letterSpacing: '-0.84px', lineHeight: 0.9, color: 'var(--text-primary)',
-          }}>Sarah Mitchell</p>
+          }}>{title}</p>
           <p className="text-text-pixel uppercase"
             style={{ fontSize: 'var(--font-size-30)', color: 'var(--accent-gold)', letterSpacing: '-0.9px' }}>
-            Senior Software Engineer
+            {subtitle}
           </p>
         </div>
         {showBtnsGroup && (
           <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
-            {CTA_BTNS_ON_COLOR.map(label => (
-              <Btn key={label} type="On color" label={label} selected={label === 'promote'} />
+            {(ctaBtns ?? CTA_BTNS_ON_COLOR).map((label, i) => (
+              <Btn key={label} type="On color" label={label} selected={i === 0} />
             ))}
           </div>
         )}
       </div>
 
-      {/* Bottom row: functional dropdown pills */}
-      <div style={{
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-        width: '100%', position: 'relative',
-      }}>
-        {/* Left: 4 dropdowns + add — w-310 */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)', alignItems: 'center', width: 310 }}>
-          <Dropdown hug variant="On color" headline="" placeholder="frontend-team"  options={TEAM_OPTIONS}  />
-          <Dropdown hug variant="On color" headline="" placeholder="Innovation Lab" options={LAB_OPTIONS}   />
-          <Dropdown hug variant="On color" headline="" placeholder="Lead Developer" options={ROLE_OPTIONS}  />
-          <Dropdown hug variant="On color" headline="" placeholder="Member"         options={ORG_OPTIONS}   />
-          <GoldAdd />
+      {/* Bottom row: functional dropdown pills — hidden when showDropdowns={false} */}
+      {showDropdowns && (
+        <div style={{
+          display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+          width: '100%', position: 'relative',
+        }}>
+          {/* Left: 4 dropdowns + add — w-310 */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)', alignItems: 'center', width: 310 }}>
+            <Dropdown hug variant="On color" headline="" placeholder="frontend-team"  options={TEAM_OPTIONS}  />
+            <Dropdown hug variant="On color" headline="" placeholder="Innovation Lab" options={LAB_OPTIONS}   />
+            <Dropdown hug variant="On color" headline="" placeholder="Lead Developer" options={ROLE_OPTIONS}  />
+            <Dropdown hug variant="On color" headline="" placeholder="Member"         options={ORG_OPTIONS}   />
+            <GoldAdd />
+          </div>
+          {/* Right: 1 dropdown + add — w-175, wrap justify-end */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 'var(--space-2)', alignItems: 'flex-start', width: 175 }}>
+            <Dropdown hug variant="On color" headline="" placeholder="LEVEL 4 (CODE RED)" options={LEVEL_OPTIONS} />
+            <GoldAdd />
+          </div>
         </div>
-        {/* Right: 1 dropdown + add — w-175, wrap justify-end */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 'var(--space-2)', alignItems: 'flex-start', width: 175 }}>
-          <Dropdown hug variant="On color" headline="" placeholder="LEVEL 4 (CODE RED)" options={LEVEL_OPTIONS} />
-          <GoldAdd />
-        </div>
-      </div>
+      )}
     </div>
   )
 }

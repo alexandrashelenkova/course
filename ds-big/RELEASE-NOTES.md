@@ -1,5 +1,13 @@
 # RELEASE-NOTES — ds-big
 
+---
+
+## showcase-dropdown-hide-empty — 2026-06-26
+
+Hid the "ON COLOR, EMPTY" and "DEFAULT, EMPTY" variant demos from the `/ds-dev` dropdown atom showcase. Removed their `<StateLabel>` blocks (label + component instance) from the "variants" `VariantRow`. All other dropdown sections unchanged: ON COLOR FILLED, DEFAULT FILLED, STATES (default interactive, disabled), OPEN (live starts open, pinned open). Dropdown component itself untouched.
+
+Build: ✅ 85 modules, 270.81 kB JS.
+
 Reverse-chronological log of every stage, build, and decision.  
 Older entries are preserved verbatim; only exact-duplicate verbose dumps are condensed.
 
@@ -588,3 +596,5 @@ H3/H4 use weight 700 (Bold). `font/weight/` has only 400 and 700 — no Semibold
 ---
 
 **2026-06-24 — `0bb2acb`** — Page 1 (AllTeams hero + metric/team grid) and Page 2 (candidate card, achievements, personal dev, relations) built and polished; Dropdown atom functional with open/close, in-place arrow rotation, and pressed overlay; Btn On-color active state; Profile avatar mix-blend-multiply; Pages sidebar links open in new tab.
+
+**2026-06-24 — `6c3af7d`** — Add `vercel.json` SPA catch-all rewrite so `/page1`, `/page2`, and all client-side routes load correctly on direct access instead of returning 404.

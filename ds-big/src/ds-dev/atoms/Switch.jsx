@@ -39,6 +39,7 @@ export default function Switch({
         border: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',
         whiteSpace: 'nowrap',
+        letterSpacing: isBig ? undefined : '1.6px',
         transition: 'background-color 140ms ease-out, color 140ms ease-out',
       }}
     >

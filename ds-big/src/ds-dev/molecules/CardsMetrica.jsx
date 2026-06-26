@@ -2,6 +2,7 @@ export default function CardsMetrica({
   title = 'Applications',
   value = '142',
   label = 'Total received',
+  width = 202,
 }) {
   return (
     <div style={{
@@ -9,7 +10,7 @@ export default function CardsMetrica({
       flexDirection: 'column',
       gap: 'var(--space-90)',
       padding: 'var(--space-30) var(--space-14)',
-      width: 202,
+      width,
       backgroundColor: 'var(--surface-card-default)',
       borderRadius: 'var(--radius-12)',
       color: 'var(--text-primary)',

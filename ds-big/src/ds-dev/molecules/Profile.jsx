@@ -3,13 +3,14 @@ import Status from '../atoms/Status.jsx'
 import Bar    from '../atoms/Bar.jsx'
 
 export default function Profile({
-  variant  = 'long',
-  name     = 'Sarah Johnson',
-  role     = 'Senior Developer',
-  person   = 'katya',
-  status   = 'green',
-  barValue = 75,
+  variant        = 'long',
+  name           = 'Sarah Johnson',
+  role           = 'Senior Developer',
+  person         = 'katya',
+  status         = 'green',
+  barValue       = 75,
   bg,
+  noBorderBottom = false,
 }) {
   if (variant === 'long') {
     return (
@@ -19,7 +20,7 @@ export default function Profile({
         gap: 'var(--space-14)',
         paddingTop: 'var(--space-14)',
         paddingBottom: 'var(--space-14)',
-        borderBottom: '1px solid var(--border-default)',
+        borderBottom: noBorderBottom ? 'none' : '1px solid var(--border-default)',
         width: '100%',
       }}>
         <Avatar person={person} />

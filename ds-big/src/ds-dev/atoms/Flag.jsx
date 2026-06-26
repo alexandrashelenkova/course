@@ -1,6 +1,7 @@
 export default function Flag({
-  active    = false,
-  disabled  = false,
+  active      = false,
+  disabled    = false,
+  colorScheme = 'default',
   onChange,
 }) {
   const ariaDisabled = disabled ? 'true' : undefined
@@ -9,6 +10,11 @@ export default function Flag({
     if (disabled) return
     onChange?.(!active)
   }
+
+  // 'inverted': active=filled-gray, inactive=outline-black (used when closed=filled, open=outline)
+  const color = colorScheme === 'inverted'
+    ? (active ? 'var(--text-secondary)' : 'var(--text-primary)')
+    : (active ? 'var(--text-primary)'   : 'var(--text-secondary)')
 
   return (
     <button
@@ -29,7 +35,7 @@ export default function Flag({
         cursor: disabled ? 'not-allowed' : 'pointer',
         padding: 'var(--space-2)',
         borderRadius: 'var(--radius-4)',
-        color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+        color,
       }}
     >
       <svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true">

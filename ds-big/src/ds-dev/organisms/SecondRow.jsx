@@ -1,6 +1,6 @@
 import Btn from '../atoms/Btn.jsx'
 
-export default function SecondRow({ type = 'Default', showBack = true }) {
+export default function SecondRow({ type = 'Default', showBack = true, bg }) {
   if (type === 'builder') {
     return (
       <div style={{
@@ -9,6 +9,7 @@ export default function SecondRow({ type = 'Default', showBack = true }) {
         justifyContent: 'space-between',
         padding: 'var(--space-14) var(--space-20)',
         width: '100%',
+        ...(bg !== undefined && { backgroundColor: bg }),
       }}>
         <Btn type="secondary" label="Back" />
         <div style={{ display: 'flex', gap: 'var(--space-8)' }}>

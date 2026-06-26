@@ -1,9 +1,10 @@
-import OrgHeader from '../ds-dev/organisms/OrgHeader.jsx'
-import CardTop   from '../ds-dev/organisms/CardTop.jsx'
-import Notify    from '../ds-dev/molecules/Notify.jsx'
-import Profile   from '../ds-dev/molecules/Profile.jsx'
-import Bar       from '../ds-dev/atoms/Bar.jsx'
-import Btn       from '../ds-dev/atoms/Btn.jsx'
+import OrgHeader  from '../ds-dev/organisms/OrgHeader.jsx'
+import CardTop    from '../ds-dev/organisms/CardTop.jsx'
+import Notify     from '../ds-dev/molecules/Notify.jsx'
+import Profile    from '../ds-dev/molecules/Profile.jsx'
+import Bar        from '../ds-dev/atoms/Bar.jsx'
+import Btn        from '../ds-dev/atoms/Btn.jsx'
+import headerP2Bg from '../ds-dev/assets/headers/header-p2-bg.webp'
 
 const ACHIEVEMENTS = [
   { title: 'Top performer', date: 'Q4 2024' },
@@ -66,7 +67,7 @@ export default function Page2() {
         gap: 'var(--space-4)',
       }}>
         {/* Card top — Default: brings yellow card, PROMOTE/NEGOTIATE/SUSPEND/FIRE, Teams/Access */}
-        <CardTop />
+        <CardTop imgSrc={headerP2Bg} />
 
         {/* Notify */}
         <Notify width="100%" />

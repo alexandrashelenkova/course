@@ -6,9 +6,12 @@ import MoleculesPage  from './pages/MoleculesPage.jsx'
 import OrganismsPage  from './pages/OrganismsPage.jsx'
 import Page1          from './pages/Page1.jsx'
 import Page2          from './pages/Page2.jsx'
+import Page3          from './pages/Page3.jsx'
+import Page4          from './pages/Page4.jsx'
+import Page5          from './pages/Page5.jsx'
 import { PAGES_CONFIG } from './pagesConfig.js'
 
-const PAGE_COMPONENTS = { 1: Page1, 2: Page2 }
+const PAGE_COMPONENTS = { 1: Page1, 2: Page2, 3: Page3, 4: Page4, 5: Page5 }
 
 export default function App() {
   return (
@@ -29,8 +32,8 @@ export default function App() {
           return <Route key={p.route} path={p.route} element={<Comp />} />
         })}
 
-        {/* /preview-page redirects to /page1 */}
-        <Route path="/preview-page/*" element={<Navigate to="/page1" replace />} />
+        {/* /preview-page redirects to /all_teams */}
+        <Route path="/preview-page/*" element={<Navigate to="/all_teams" replace />} />
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="/ds-dev/styles" replace />} />
